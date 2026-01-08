@@ -1,0 +1,22 @@
+{
+  "name": "ia-rimas-brasil",
+  "version": "1.0.0",
+  "description": "IA de Rimas Brasileiras - Batalhas de Rap",
+  "main": "src/index.tsx",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 3000",
+    "deploy": "npm run build && wrangler pages deploy dist"
+  },
+  "dependencies": {
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240620.0",
+    "@hono/vite-cloudflare-pages": "^0.4.2",
+    "vite": "^5.0.0",
+    "wrangler": "^3.78.0",
+    "typescript": "^5.0.0"
+  }
+}
