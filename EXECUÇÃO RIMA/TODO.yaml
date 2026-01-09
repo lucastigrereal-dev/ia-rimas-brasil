@@ -133,7 +133,7 @@ tasks:
       - "Usa Tailwind para estilos"
       - "Animação suave"
       - "Responsivo"
-    status: "pending"
+    status: "done"
 
   - id: "task_007"
     title: "Criar componente StreakFire"
