@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA de Rimas Brasil - Banco de Rimas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+        .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .glow { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+        .rima-tag { transition: all 0.2s; }
+        .rima-tag:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-5xl font-bold mb-3">
+                <i class="fas fa-microphone-alt text-purple-500"></i>
+                BANCO DE RIMAS BRASIL
+            </h1>
+            <p class="text-gray-400 text-lg">Rimas extraídas de artistas brasileiros com IA</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <div class="card rounded-xl p-5 text-center">
+                <i class="fas fa-music text-3xl text-blue-400 mb-2"></i>
+                <div class="text-3xl font-bold" id="stat-letras">-</div>
+                <div class="text-gray-400 text-sm">Letras</div>
+            </div>
+            <div class="card rounded-xl p-5 text-center">
+                <i class="fas fa-link text-3xl text-green-400 mb-2"></i>
+                <div class="text-3xl font-bold" id="stat-rimas">-</div>
+                <div class="text-gray-400 text-sm">Rimas</div>
+            </div>
+            <div class="card rounded-xl p-5 text-center">
+                <i class="fas fa-users text-3xl text-yellow-400 mb-2"></i>
+                <div class="text-3xl font-bold" id="stat-artistas">-</div>
+                <div class="text-gray-400 text-sm">Artistas</div>
+            </div>
+            <div class="card rounded-xl p-5 text-center">
+                <i class="fas fa-star text-3xl text-purple-400 mb-2"></i>
+                <div class="text-3xl font-bold" id="stat-qualidade">-</div>
+                <div class="text-gray-400 text-sm">Qualidade</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Buscar Rimas -->
+            <div class="card rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4">
+                    <i class="fas fa-search text-blue-400 mr-2"></i>
+                    Buscar Rimas
+                </h2>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="busca-palavra"
+                           class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none"
+                           placeholder="Digite uma palavra (ex: amor, vida, rua)">
+                    <button onclick="buscarRimas()"
+                            class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-bold transition">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div id="resultado-busca" class="space-y-3 max-h-80 overflow-y-auto"></div>
+            </div>
+
+            <!-- Gerar Rima -->
+            <div class="card rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4">
+                    <i class="fas fa-magic text-purple-400 mr-2"></i>
+                    Gerar Rima por Tema
+                </h2>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="gerar-tema"
+                           class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none"
+                           placeholder="Digite um tema (ex: favela, luta, amor)">
+                    <button onclick="gerarRima()"
+                            class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-6 py-3 rounded-lg font-bold transition">
+                        <i class="fas fa-bolt"></i>
+                    </button>
+                </div>
+                <div id="resultado-gerar" class="bg-gray-900 rounded-lg p-4 min-h-32">
+                    <p class="text-gray-500 italic">Rima gerada aparecerá aqui...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Rimas e Artistas -->
+        <div class="grid md:grid-cols-2 gap-6 mt-6">
+            <!-- Top Rimas -->
+            <div class="card rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4">
+                    <i class="fas fa-trophy text-yellow-400 mr-2"></i>
+                    Top Rimas Mais Usadas
+                </h2>
+                <div id="top-rimas" class="space-y-2 max-h-80 overflow-y-auto"></div>
+            </div>
+
+            <!-- Artistas -->
+            <div class="card rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4">
+                    <i class="fas fa-microphone text-green-400 mr-2"></i>
+                    Artistas no Banco
+                </h2>
+                <div id="lista-artistas" class="space-y-2 max-h-80 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- Sugerir Rimas -->
+        <div class="card rounded-xl p-6 mt-6">
+            <h2 class="text-xl font-bold mb-4">
+                <i class="fas fa-lightbulb text-yellow-400 mr-2"></i>
+                Sugerir Rimas para Palavra
+            </h2>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="sugerir-palavra"
+                       class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none"
+                       placeholder="Digite uma palavra para encontrar rimas">
+                <button onclick="sugerirRimas()"
+                        class="bg-yellow-600 hover:bg-yellow-700 px-6 py-3 rounded-lg font-bold transition">
+                    <i class="fas fa-lightbulb"></i> Sugerir
+                </button>
+            </div>
+            <div id="resultado-sugestao" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-10 text-gray-500 text-sm">
+            <p>Powered by Ollama + Genius API | Crawler rodando em background</p>
+            <p class="mt-1">
+                <i class="fas fa-database mr-1"></i>
+                API: <a href="http://localhost:3002" class="text-purple-400 hover:underline" target="_blank">localhost:3002</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3002';
+
+        // Carregar estatísticas
+        async function carregarStats() {
+            try {
+                const res = await fetch(`${API_URL}/`);
+                const data = await res.json();
+
+                document.getElementById('stat-letras').textContent = data.banco.letras.toLocaleString();
+                document.getElementById('stat-rimas').textContent = data.banco.rimas.toLocaleString();
+                document.getElementById('stat-artistas').textContent = data.banco.artistas;
+                document.getElementById('stat-qualidade').textContent = data.banco.qualidade_media + '/10';
+            } catch (e) {
+                console.error('Erro ao carregar stats:', e);
+            }
+        }
+
+        // Buscar rimas
+        async function buscarRimas() {
+            const palavra = document.getElementById('busca-palavra').value.trim();
+            if (!palavra) return alert('Digite uma palavra!');
+
+            const container = document.getElementById('resultado-busca');
+            container.innerHTML = '<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-2"></i>Buscando...</p>';
+
+            try {
+                const res = await fetch(`${API_URL}/buscar/${encodeURIComponent(palavra)}`);
+                const data = await res.json();
+
+                if (data.total === 0) {
+                    container.innerHTML = '<p class="text-gray-400">Nenhuma rima encontrada para essa palavra.</p>';
+                    return;
+                }
+
+                let html = `<div class="text-sm text-gray-400 mb-3">
+                    <span class="text-purple-400 font-bold">${data.total}</span> rimas encontradas
+                    (${data.por_tipo.perfeita} perfeitas, ${data.por_tipo.consoante} consoantes)
+                </div>`;
+
+                html += '<div class="flex flex-wrap gap-2">';
+                data.rimas.slice(0, 30).forEach(r => {
+                    const cor = r.tipo === 'perfeita' ? 'bg-green-600' :
+                               r.tipo === 'consoante' ? 'bg-blue-600' :
+                               r.tipo === 'toante' ? 'bg-yellow-600' : 'bg-gray-600';
+                    html += `<span class="rima-tag ${cor} px-3 py-1 rounded-full text-sm cursor-pointer"
+                                   onclick="document.getElementById('busca-palavra').value='${r.rima}';buscarRimas()">
+                        ${r.rima}
+                    </span>`;
+                });
+                html += '</div>';
+
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = '<p class="text-red-400">Erro ao buscar rimas.</p>';
+            }
+        }
+
+        // Gerar rima
+        async function gerarRima() {
+            const tema = document.getElementById('gerar-tema').value.trim();
+            if (!tema) return alert('Digite um tema!');
+
+            const container = document.getElementById('resultado-gerar');
+            container.innerHTML = '<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-2"></i>Gerando...</p>';
+
+            try {
+                const res = await fetch(`${API_URL}/gerar/${encodeURIComponent(tema)}`);
+                const data = await res.json();
+
+                if (data.error) {
+                    container.innerHTML = `<p class="text-yellow-400"><i class="fas fa-exclamation-triangle mr-2"></i>${data.error}</p>
+                                          <p class="text-gray-500 text-sm mt-2">${data.sugestao || ''}</p>`;
+                    return;
+                }
+
+                let html = `<div class="mb-3">
+                    <span class="text-purple-400 text-sm">Tema: ${data.tema}</span>
+                    <span class="text-gray-500 text-sm ml-3">(${data.versos_disponiveis} versos disponíveis)</span>
+                </div>`;
+
+                html += `<pre class="text-lg leading-relaxed whitespace-pre-wrap font-mono">${data.rima_gerada}</pre>`;
+
+                html += '<div class="mt-4 flex flex-wrap gap-2">';
+                data.rimas_usadas.forEach(r => {
+                    html += `<span class="bg-purple-600/50 px-2 py-1 rounded text-xs">${r.par[0]} / ${r.par[1]}</span>`;
+                });
+                html += '</div>';
+
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = '<p class="text-red-400">Erro ao gerar rima.</p>';
+            }
+        }
+
+        // Sugerir rimas
+        async function sugerirRimas() {
+            const palavra = document.getElementById('sugerir-palavra').value.trim();
+            if (!palavra) return alert('Digite uma palavra!');
+
+            const container = document.getElementById('resultado-sugestao');
+            container.innerHTML = '<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-2"></i>Buscando sugestões...</p>';
+
+            try {
+                const res = await fetch(`${API_URL}/sugerir/${encodeURIComponent(palavra)}`);
+                const data = await res.json();
+
+                if (data.total === 0) {
+                    container.innerHTML = '<p class="text-gray-400">Nenhuma sugestão encontrada.</p>';
+                    return;
+                }
+
+                let html = '';
+                data.sugestoes.forEach(s => {
+                    const tamanho = s.frequencia > 10 ? 'text-lg px-4 py-2' :
+                                   s.frequencia > 5 ? 'text-base px-3 py-1' : 'text-sm px-2 py-1';
+                    html += `<span class="rima-tag bg-gradient-to-r from-purple-600 to-blue-600 ${tamanho} rounded-full cursor-pointer"
+                                   onclick="document.getElementById('busca-palavra').value='${s.palavra}';buscarRimas()">
+                        ${s.palavra} <span class="opacity-60">(${s.frequencia}x)</span>
+                    </span>`;
+                });
+
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = '<p class="text-red-400">Erro ao buscar sugestões.</p>';
+            }
+        }
+
+        // Carregar top rimas
+        async function carregarTopRimas() {
+            try {
+                const res = await fetch(`${API_URL}/top?limite=15`);
+                const data = await res.json();
+
+                let html = '';
+                data.rimas.forEach((r, i) => {
+                    const cor = i < 3 ? 'text-yellow-400' : 'text-gray-300';
+                    const icon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
+                    html += `<div class="flex items-center justify-between py-2 border-b border-gray-800">
+                        <div>
+                            <span class="mr-2">${icon}</span>
+                            <span class="${cor} font-mono">${r.par[0]}</span>
+                            <span class="text-gray-500 mx-1">/</span>
+                            <span class="${cor} font-mono">${r.par[1]}</span>
+                        </div>
+                        <span class="text-gray-500 text-sm">${r.frequencia}x</span>
+                    </div>`;
+                });
+
+                document.getElementById('top-rimas').innerHTML = html;
+            } catch (e) {
+                console.error('Erro ao carregar top rimas:', e);
+            }
+        }
+
+        // Carregar artistas
+        async function carregarArtistas() {
+            try {
+                const res = await fetch(`${API_URL}/artistas`);
+                const data = await res.json();
+
+                let html = '';
+                data.artistas.forEach(a => {
+                    const qualidadeCor = a.qualidade >= 7 ? 'text-green-400' :
+                                        a.qualidade >= 5 ? 'text-yellow-400' : 'text-red-400';
+                    html += `<div class="flex items-center justify-between py-2 border-b border-gray-800">
+                        <div>
+                            <span class="font-bold">${a.nome}</span>
+                            <span class="text-gray-500 text-sm ml-2">${a.musicas} músicas</span>
+                        </div>
+                        <span class="${qualidadeCor} font-bold">${a.qualidade}/10</span>
+                    </div>`;
+                });
+
+                document.getElementById('lista-artistas').innerHTML = html;
+            } catch (e) {
+                console.error('Erro ao carregar artistas:', e);
+            }
+        }
+
+        // Enter para buscar
+        document.getElementById('busca-palavra').addEventListener('keypress', e => {
+            if (e.key === 'Enter') buscarRimas();
+        });
+        document.getElementById('gerar-tema').addEventListener('keypress', e => {
+            if (e.key === 'Enter') gerarRima();
+        });
+        document.getElementById('sugerir-palavra').addEventListener('keypress', e => {
+            if (e.key === 'Enter') sugerirRimas();
+        });
+
+        // Inicializar
+        carregarStats();
+        carregarTopRimas();
+        carregarArtistas();
+
+        // Atualizar stats a cada 30 segundos
+        setInterval(carregarStats, 30000);
+    </script>
+</body>
+</html>

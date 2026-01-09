@@ -1,0 +1,33 @@
+{
+  "name": "night-crawler",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Sistema híbrido de geração de rimas para rap brasileiro",
+  "main": "dist/generator/index.js",
+  "types": "dist/generator/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/generator/index.ts",
+    "setup-fts": "tsx scripts/setup-fts5.ts",
+    "generate": "tsx src/cli.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "crawl": "tsx index.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.3",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.4.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/node": "^20.11.16",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

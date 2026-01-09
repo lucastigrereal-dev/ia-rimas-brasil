@@ -1,12 +1,25 @@
-import { defineConfig } from 'vite'
-import pages from '@hono/vite-cloudflare-pages'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [pages()],
+  plugins: [react()],
   build: {
-    outDir: 'dist'
+    outDir: 'dist',
+    sourcemap: true,
   },
   server: {
-    port: 3000
-  }
-})
+    port: 5555,
+    strictPort: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:12345',
+        changeOrigin: true,
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      '@': '/src/ui',
+    },
+  },
+});

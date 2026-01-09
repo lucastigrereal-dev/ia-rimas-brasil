@@ -1,34 +1,16 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { serve } from '@hono/node-server'
+import { getDB } from './services/database'
 
 const app = new Hono()
+const PORT = 3001
 
 // CORS
 app.use('/api/*', cors())
 
-// Banco de dados em memoria
-const bancoDados: {
-  letras: Array<{ id: number; titulo: string; artista: string; letra: string }>;
-  rimas: Array<any>;
-  rimasGeradas: Array<{ tema: string; estilo: string; conteudo: string; score: number; data: string }>;
-} = {
-  letras: [
-    {
-      id: 1,
-      titulo: 'Batalha Exemplo 1',
-      artista: 'MC Teste',
-      letra: 'Minha vida e um verso, cada luta e refrao\nNo concreto da quebrada eu escrevo minha cancao\nNao venho com fake, meu flow e de raiz\nNa batalha da vida, so sobrevive feliz'
-    },
-    {
-      id: 2,
-      titulo: 'Batalha Exemplo 2',
-      artista: 'MC Flow',
-      letra: 'Teu verso e bonito mas na rua e diferente\nEnquanto tu poetiza eu to no corre presente\nMinha caneta e a rua, minha tinta e suor\nNao falo de batalha, eu vivo o valor'
-    }
-  ],
-  rimas: [],
-  rimasGeradas: []
-}
+// Database instance
+const db = getDB()
 
 // Funcao para analisar rimas
 function analisarRimas(letra: string) {
@@ -98,28 +80,84 @@ function gerarRima(tema: string, estilo: string) {
 
 // API: Listar letras
 app.get('/api/letras', (c) => {
+  const limit = parseInt(c.req.query('limit') || '20')
+  const offset = parseInt(c.req.query('offset') || '0')
+  const estilo = c.req.query('estilo')
+  const artista_id = c.req.query('artista_id')
+
+  const letras = db.getLetras({
+    limit,
+    offset,
+    estilo: estilo || undefined,
+    artista_id: artista_id ? parseInt(artista_id) : undefined
+  })
+
+  const stats = db.getStats()
+
   return c.json({
-    total: bancoDados.letras.length,
-    letras: bancoDados.letras
+    total: stats.totalLetras,
+    limit,
+    offset,
+    hasMore: offset + letras.length < stats.totalLetras,
+    letras: letras.map(l => ({
+      id: l.id,
+      titulo: l.titulo,
+      artista: l.artista_nome || 'Desconhecido',
+      letra: l.letra,
+      estilo: l.estilo,
+      qualidade: l.qualidade,
+      views: l.views,
+      versos_total: l.versos_total
+    }))
   })
 })
 
 // API: Buscar letra especifica
 app.get('/api/letras/:id', (c) => {
   const id = parseInt(c.req.param('id'))
-  const letra = bancoDados.letras.find(l => l.id === id)
+  const letra = db.getLetraById(id)
 
   if (!letra) {
     return c.json({ error: 'Letra nao encontrada' }, 404)
   }
 
-  return c.json(letra)
+  return c.json({
+    id: letra.id,
+    titulo: letra.titulo,
+    artista: letra.artista_nome || 'Desconhecido',
+    letra: letra.letra,
+    estilo: letra.estilo,
+    qualidade: letra.qualidade,
+    views: letra.views,
+    versos_total: letra.versos_total,
+    temas: letra.temas ? JSON.parse(letra.temas) : []
+  })
+})
+
+// API: Buscar letras
+app.get('/api/letras/search', (c) => {
+  const q = c.req.query('q') || ''
+  if (q.length < 2) {
+    return c.json({ error: 'Query deve ter ao menos 2 caracteres' }, 400)
+  }
+
+  const letras = db.searchLetras(q)
+  return c.json({
+    query: q,
+    count: letras.length,
+    results: letras.map(l => ({
+      id: l.id,
+      titulo: l.titulo,
+      artista: l.artista_nome || 'Desconhecido',
+      estilo: l.estilo
+    }))
+  })
 })
 
 // API: Analisar rimas de uma letra
 app.post('/api/analisar', async (c) => {
   const { letraId } = await c.req.json()
-  const letra = bancoDados.letras.find(l => l.id === letraId)
+  const letra = db.getLetraById(letraId)
 
   if (!letra) {
     return c.json({ error: 'Letra nao encontrada' }, 404)
@@ -129,9 +167,56 @@ app.post('/api/analisar', async (c) => {
 
   return c.json({
     letra: letra.titulo,
-    artista: letra.artista,
+    artista: letra.artista_nome || 'Desconhecido',
     totalRimas: rimas.length,
     rimas
+  })
+})
+
+// API: Listar rimas do banco
+app.get('/api/rimas', (c) => {
+  const palavra = c.req.query('palavra')
+  const tipo = c.req.query('tipo')
+  const limit = parseInt(c.req.query('limit') || '50')
+
+  const rimas = db.getRimas({ palavra: palavra || undefined, tipo: tipo || undefined, limit })
+
+  return c.json({
+    total: rimas.length,
+    rimas: rimas.map(r => ({
+      id: r.id,
+      palavra1: r.palavra1,
+      palavra2: r.palavra2,
+      verso1: r.verso1,
+      verso2: r.verso2,
+      tipo: r.tipo,
+      score: r.score,
+      letra: r.letra_titulo
+    }))
+  })
+})
+
+// API: Buscar rimas por palavra
+app.get('/api/rimas/palavra/:palavra', (c) => {
+  const palavra = c.req.param('palavra')
+  const rimas = db.getRimasPorPalavra(palavra)
+
+  const sugestoes = [...new Set(rimas.map(r =>
+    r.palavra1.toLowerCase() === palavra.toLowerCase() ? r.palavra2 : r.palavra1
+  ))]
+
+  return c.json({
+    palavra,
+    total: rimas.length,
+    sugestoes: sugestoes.slice(0, 20),
+    matches: rimas.slice(0, 50).map(r => ({
+      palavra1: r.palavra1,
+      palavra2: r.palavra2,
+      tipo: r.tipo,
+      score: r.score,
+      verso1: r.verso1,
+      verso2: r.verso2
+    }))
   })
 })
 
@@ -144,32 +229,57 @@ app.post('/api/gerar', async (c) => {
   }
 
   const rima = gerarRima(tema, estilo || 'agressivo')
-  bancoDados.rimasGeradas.push(rima)
 
-  return c.json(rima)
+  // Salvar no banco
+  const id = db.saveRimaGerada({
+    tema: rima.tema,
+    estilo: rima.estilo,
+    conteudo: rima.conteudo,
+    score: rima.score
+  })
+
+  return c.json({ ...rima, id })
 })
 
 // API: Listar rimas geradas
 app.get('/api/rimas-geradas', (c) => {
+  const limit = parseInt(c.req.query('limit') || '10')
+  const rimas = db.getRimasGeradas(limit)
+
   return c.json({
-    total: bancoDados.rimasGeradas.length,
-    rimas: bancoDados.rimasGeradas.slice(-10)
+    total: rimas.length,
+    rimas: rimas.map(r => ({
+      id: r.id,
+      tema: r.tema,
+      estilo: r.estilo,
+      conteudo: r.conteudo,
+      score: r.score,
+      data: r.created_at
+    }))
   })
 })
 
 // API: Estatisticas
 app.get('/api/stats', (c) => {
-  const totalVersos = bancoDados.letras.reduce((acc, l) => {
-    return acc + l.letra.split('\n').length
-  }, 0)
+  const stats = db.getStats()
 
   return c.json({
-    totalLetras: bancoDados.letras.length,
-    totalVersos,
-    totalRimasGeradas: bancoDados.rimasGeradas.length,
-    mediaScore: bancoDados.rimasGeradas.length > 0
-      ? bancoDados.rimasGeradas.reduce((acc, r) => acc + r.score, 0) / bancoDados.rimasGeradas.length
-      : 0
+    totalLetras: stats.totalLetras,
+    totalVersos: stats.totalVersos,
+    totalRimas: stats.totalRimas,
+    totalArtistas: stats.totalArtistas,
+    totalRimasGeradas: stats.totalRimasGeradas,
+    mediaQualidade: stats.mediaQualidade,
+    rimasPorTipo: stats.rimasPorTipo
+  })
+})
+
+// API: Listar artistas
+app.get('/api/artistas', (c) => {
+  const artistas = db.getArtistas()
+  return c.json({
+    total: artistas.length,
+    artistas
   })
 })
 
@@ -200,26 +310,31 @@ app.get('/', (c) => {
             </div>
 
             <!-- Estatisticas -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                <div class="bg-gray-800 rounded-lg p-6 text-center">
-                    <i class="fas fa-music text-4xl text-blue-500 mb-3"></i>
-                    <h3 class="text-3xl font-bold" id="totalLetras">0</h3>
-                    <p class="text-gray-400">Letras Coletadas</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+                <div class="bg-gray-800 rounded-lg p-4 text-center">
+                    <i class="fas fa-music text-3xl text-blue-500 mb-2"></i>
+                    <h3 class="text-2xl font-bold" id="totalLetras">0</h3>
+                    <p class="text-gray-400 text-sm">Letras</p>
                 </div>
-                <div class="bg-gray-800 rounded-lg p-6 text-center">
-                    <i class="fas fa-scroll text-4xl text-green-500 mb-3"></i>
-                    <h3 class="text-3xl font-bold" id="totalVersos">0</h3>
-                    <p class="text-gray-400">Versos Analisados</p>
+                <div class="bg-gray-800 rounded-lg p-4 text-center">
+                    <i class="fas fa-scroll text-3xl text-green-500 mb-2"></i>
+                    <h3 class="text-2xl font-bold" id="totalVersos">0</h3>
+                    <p class="text-gray-400 text-sm">Versos</p>
                 </div>
-                <div class="bg-gray-800 rounded-lg p-6 text-center">
-                    <i class="fas fa-star text-4xl text-yellow-500 mb-3"></i>
-                    <h3 class="text-3xl font-bold" id="totalRimas">0</h3>
-                    <p class="text-gray-400">Rimas Geradas</p>
+                <div class="bg-gray-800 rounded-lg p-4 text-center">
+                    <i class="fas fa-link text-3xl text-orange-500 mb-2"></i>
+                    <h3 class="text-2xl font-bold" id="totalRimasBanco">0</h3>
+                    <p class="text-gray-400 text-sm">Rimas no Banco</p>
                 </div>
-                <div class="bg-gray-800 rounded-lg p-6 text-center">
-                    <i class="fas fa-trophy text-4xl text-purple-500 mb-3"></i>
-                    <h3 class="text-3xl font-bold" id="mediaScore">0.0</h3>
-                    <p class="text-gray-400">Score Medio</p>
+                <div class="bg-gray-800 rounded-lg p-4 text-center">
+                    <i class="fas fa-magic text-3xl text-yellow-500 mb-2"></i>
+                    <h3 class="text-2xl font-bold" id="totalRimas">0</h3>
+                    <p class="text-gray-400 text-sm">Rimas Geradas</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 text-center">
+                    <i class="fas fa-trophy text-3xl text-purple-500 mb-2"></i>
+                    <h3 class="text-2xl font-bold" id="mediaScore">0.0</h3>
+                    <p class="text-gray-400 text-sm">Qualidade Media</p>
                 </div>
             </div>
 
@@ -319,10 +434,11 @@ app.get('/', (c) => {
                     const response = await fetch('/api/stats');
                     const stats = await response.json();
 
-                    document.getElementById('totalLetras').textContent = stats.totalLetras;
-                    document.getElementById('totalVersos').textContent = stats.totalVersos;
+                    document.getElementById('totalLetras').textContent = stats.totalLetras.toLocaleString();
+                    document.getElementById('totalVersos').textContent = stats.totalVersos.toLocaleString();
+                    document.getElementById('totalRimasBanco').textContent = stats.totalRimas.toLocaleString();
                     document.getElementById('totalRimas').textContent = stats.totalRimasGeradas;
-                    document.getElementById('mediaScore').textContent = stats.mediaScore.toFixed(1);
+                    document.getElementById('mediaScore').textContent = (stats.mediaQualidade * 10).toFixed(1);
                 } catch (error) {
                     console.error('Erro ao carregar stats:', error);
                 }
@@ -461,5 +577,13 @@ app.get('/', (c) => {
     </html>
   `)
 })
+
+// Start server
+console.log(`\n🎤 IA de Rimas Brasil API rodando em http://localhost:${PORT}`)
+console.log(`📊 Stats: http://localhost:${PORT}/api/stats`)
+console.log(`🎵 Letras: http://localhost:${PORT}/api/letras`)
+console.log(`🔗 Rimas: http://localhost:${PORT}/api/rimas\n`)
+
+serve({ fetch: app.fetch, port: PORT })
 
 export default app
