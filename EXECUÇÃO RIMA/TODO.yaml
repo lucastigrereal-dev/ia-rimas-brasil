@@ -155,7 +155,7 @@ tasks:
       - "Animação CSS do fogo"
       - "3 tamanhos: small, medium, large"
       - "Cor dinâmica"
-    status: "pending"
+    status: "done"
 
   - id: "task_008"
     title: "Criar componente DrillCard"
