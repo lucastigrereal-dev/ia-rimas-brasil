@@ -1,0 +1,80 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🌙 MODO NOTURNO - CONFIGURAÇÕES
+# IA Rimas Brasil
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Ollama (modelo local)
+ollama:
+  url: "http://localhost:11434/api/generate"
+  model: "codellama:13b"  # Alternativas: "deepseek-coder:6.7b", "mistral:7b"
+  timeout: 300  # segundos
+  temperature: 0.3  # Baixo = mais determinístico
+
+# Claude API (revisão)
+claude:
+  url: "https://api.anthropic.com/v1/messages"
+  model: "claude-sonnet-4-20250514"  # Sonnet para custo-benefício
+  # API Key via variável de ambiente: ANTHROPIC_API_KEY
+  max_tokens: 4096
+
+# Projeto
+project:
+  root: "C:\\Users\\lucas\\webapp"
+  main_branch: "main"
+  nightmode_branch: "nightly-bot"
+
+# Ciclos
+cycles:
+  interval_minutes: 30
+  max_per_night: 20
+  max_files_per_cycle: 10
+  max_diff_lines: 500
+
+# Testes
+tests:
+  command: "npm test"
+  lint_command: "npm run lint"
+  build_command: "npm run build"
+  timeout: 300  # segundos
+
+# Diretórios
+paths:
+  reports: "nightmode/reports"
+  backups: "nightmode/backups"
+  logs: "nightmode/logs"
+
+# Horários (opcional - para agendador)
+schedule:
+  start_hour: 23  # 23:00
+  end_hour: 7     # 07:00
+  days:
+    - "monday"
+    - "tuesday"
+    - "wednesday"
+    - "thursday"
+    - "friday"
+
+# Notificações (opcional)
+notifications:
+  enabled: false
+  email: ""
+  slack_webhook: ""
+  on_success: false
+  on_failure: true
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARN, ERROR
+  console: true
+  file: true
+  max_file_size_mb: 10
+  retention_days: 30
+
+# Segurança adicional
+security:
+  require_tests_pass: true
+  require_lint_pass: true
+  require_build_pass: true
+  min_review_score: 70
+  max_consecutive_failures: 3
+  auto_stop_on_critical_error: true
