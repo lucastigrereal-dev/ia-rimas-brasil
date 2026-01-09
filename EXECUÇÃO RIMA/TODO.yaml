@@ -50,7 +50,7 @@ tasks:
       - "Interface Drill exportada"
       - "Enum DrillCategory exportado"
       - "Tipos bem documentados"
-    status: "pending"
+    status: "done"
 
   - id: "task_003"
     title: "Criar tipo Progress"
