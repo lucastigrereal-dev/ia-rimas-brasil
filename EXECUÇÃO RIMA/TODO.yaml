@@ -67,7 +67,7 @@ tasks:
     acceptance_criteria:
       - "Interfaces exportadas"
       - "Stars tipado como 0 | 1 | 2 | 3"
-    status: "pending"
+    status: "done"
 
   - id: "task_004"
     title: "Criar utilitário de XP"
