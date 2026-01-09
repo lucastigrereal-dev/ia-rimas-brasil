@@ -180,7 +180,7 @@ tasks:
       - "Estados visuais distintos"
       - "Hover effect"
       - "onClick handler"
-    status: "pending"
+    status: "done"
 
   - id: "task_009"
     title: "Criar componente LeaderboardRow"
