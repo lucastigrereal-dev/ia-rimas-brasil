@@ -16,7 +16,10 @@
     "setup-fts": "tsx night-crawler/scripts/setup-fts5.ts",
     "generate": "tsx night-crawler/src/cli.ts",
     "test:generator": "vitest run --config night-crawler/vitest.config.ts",
-    "test:generator:watch": "vitest --config night-crawler/vitest.config.ts"
+    "test:generator:watch": "vitest --config night-crawler/vitest.config.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.7",
@@ -32,6 +35,10 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240620.0",
+    "@playwright/test": "^1.57.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.0.3",
     "@types/react": "^18.3.18",
@@ -42,6 +49,7 @@
     "cheerio": "^1.1.2",
     "concurrently": "^9.1.2",
     "dotenv": "^17.2.3",
+    "jsdom": "^27.4.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.21.0",
