@@ -265,7 +265,7 @@ tasks:
       - "Cleanup correto no unmount"
       - "Preciso ao segundo"
       - "Suporta countdown"
-    status: "pending"
+    status: "done"
 
   - id: "task_013"
     title: "Criar utilitário de rima"
