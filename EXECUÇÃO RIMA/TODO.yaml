@@ -350,7 +350,7 @@ tasks:
     acceptance_criteria:
       - "Coverage > 80%"
       - "Testa casos de borda"
-    status: "pending"
+    status: "done"
 
   - id: "task_021"
     title: "Testes para utilitário Streak"
@@ -370,7 +370,7 @@ tasks:
     acceptance_criteria:
       - "Coverage > 80%"
       - "Testa com diferentes timezones"
-    status: "pending"
+    status: "done"
 
 # ═══════════════════════════════════════════════════════════════
 # CONFIGURAÇÕES
