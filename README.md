@@ -1,137 +1,139 @@
 # IA Rimas Brasil
 
-> Sistema de Geração de Rimas para Batalhas de Rap Brasileiro usando IA Híbrida
-
-[![Status](https://img.shields.io/badge/status-production-green.svg)]()
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)]()
-[![React](https://img.shields.io/badge/React-18.3-61dafb.svg)]()
-[![License](https://img.shields.io/badge/license-MIT-green.svg)]()
-
-## Sobre
-
-O **IA Rimas Brasil** é um sistema completo de geração de rimas para MCs e batalhas de rap. Combina inteligência artificial híbrida (GPT-4o-mini + Ollama) com um banco de dados de 26.600+ rimas reais extraídas de letras de rap brasileiro.
+Treine freestyle e melhore suas habilidades de rima com inteligencia artificial.
 
 ## Features
 
-- **Geração de Rimas com IA** - GPT-4o-mini + Ollama + Fallback
-- **4 Estilos** - Agressivo, Técnico, Filosófico, Romântico
-- **26k+ Rimas Reais** - Extraídas de 787 letras de rap BR
-- **Score Automático** - Análise de qualidade das rimas
-- **Interface Dark Mode** - Design preto/dourado
-- **Custo Mínimo** - ~R$ 0,001 por geração
+- **Drills de Freestyle**: Pratique com diferentes exercicios de rima
+- **Gamificacao**: XP, niveis, badges e streaks para manter voce motivado
+- **Leaderboard**: Compete com outros rimadores
+- **PWA**: Instale como app e use offline
+- **Analytics**: Acompanhe seu progresso
 
-## Quick Start
+## Tech Stack
+
+- **Frontend**: React 18 + TypeScript + Tailwind CSS
+- **Backend**: Hono (API)
+- **Database**: Firebase (Auth + Firestore)
+- **Deploy**: Cloudflare Pages
+- **PWA**: vite-plugin-pwa + Workbox
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- npm 10+
+- Firebase project configurado
+
+### Installation
 
 ```bash
-# Clonar repositório
-git clone https://github.com/lucastigrereal-dev/ia-rimas-brasil.git
+# Clone o repositorio
+git clone https://github.com/seu-usuario/ia-rimas-brasil.git
 cd ia-rimas-brasil
 
-# Instalar dependências
+# Instale dependencias
 npm install
 
-# Configurar variáveis de ambiente
-cp .env.example .env
-# Editar .env com suas API keys
-
-# Iniciar desenvolvimento
-npm run dev
+# Configure variaveis de ambiente
+cp .env.example .env.local
+# Edite .env.local com suas credenciais Firebase
 ```
 
-## Acessar
-
-- **Frontend:** http://localhost:5555
-- **API:** http://localhost:12345
-
-## Stack
-
-| Camada | Tecnologias |
-|--------|-------------|
-| Frontend | React 18, TypeScript, Vite, TailwindCSS, Framer Motion |
-| Backend | Node.js, Hono, SQLite, Zod |
-| IA | GPT-4o-mini, Ollama (mistral:latest) |
-| Deploy | Cloudflare Pages |
-
-## API
-
-### Gerar Rima
+### Development
 
 ```bash
-curl -X POST http://localhost:12345/api/gerar \
-  -H "Content-Type: application/json" \
-  -d '{"tema":"favela","estilo":"agressivo"}'
+# Inicie o servidor de desenvolvimento
+npm run dev
+
+# Apenas o frontend
+npm run dev:ui
+
+# Apenas a API
+npm run dev:api
 ```
 
-### Endpoints Principais
+### Testing
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/stats` | Estatísticas |
-| GET | `/api/rimas` | Listar rimas |
-| GET | `/api/letras` | Listar letras |
-| POST | `/api/gerar` | Gerar rima |
-| GET | `/api/rimas-geradas` | Histórico |
+```bash
+# Testes unitarios
+npm run test
 
-## Estrutura
+# Testes com watch mode
+npm run test:watch
 
-```
-webapp/
-├── src/
-│   ├── api/          # Backend Hono
-│   ├── services/     # Database + Generator
-│   ├── schemas/      # Validação Zod
-│   └── ui/           # Frontend React
-├── data/             # SQLite database
-├── night-crawler/    # Engine avançado
-└── public/           # Assets estáticos
+# Testes E2E (requer build)
+npm run test:e2e
 ```
 
-## Métricas
+### Build
 
-| Métrica | Valor |
-|---------|-------|
-| Letras | 787 |
-| Rimas | 26.600+ |
-| Artistas | 9 |
-| Versos | 28.730 |
+```bash
+# Build para producao
+npm run build
 
-## Documentação
+# Preview da build
+npm run preview
+```
 
-- [Relatório Técnico Completo](./RELATORIO_TECNICO_COMPLETO.md)
-- [Estrutura Notion](./NOTION_ESTRUTURA.md)
-- [Arquitetura](./ARQUITETURA_RIMAS.md)
+### Deploy
+
+```bash
+# Deploy para Cloudflare Pages
+npm run deploy
+```
+
+## Project Structure
+
+```
+src/
+├── api/           # API Hono
+├── components/    # Componentes React
+├── config/        # Configuracoes (env, etc)
+├── contexts/      # React Contexts
+├── hooks/         # Custom hooks
+├── pages/         # Paginas da aplicacao
+├── services/      # Servicos (Firebase, Analytics, etc)
+├── types/         # TypeScript types
+├── ui/            # Entry point React
+└── utils/         # Utilitarios
+```
+
+## Environment Variables
+
+Veja `.env.example` para a lista completa de variaveis necessarias.
+
+Variaveis obrigatorias:
+- `VITE_FIREBASE_API_KEY`
+- `VITE_FIREBASE_AUTH_DOMAIN`
+- `VITE_FIREBASE_PROJECT_ID`
+- `VITE_FIREBASE_STORAGE_BUCKET`
+- `VITE_FIREBASE_MESSAGING_SENDER_ID`
+- `VITE_FIREBASE_APP_ID`
 
 ## Scripts
 
-```bash
-npm run dev          # Dev (UI + API)
-npm run dev:ui       # Apenas frontend
-npm run dev:api      # Apenas backend
-npm run build        # Build produção
-npm run deploy       # Deploy Cloudflare
-```
+| Script | Descricao |
+|--------|-----------|
+| `npm run dev` | Inicia dev server (API + UI) |
+| `npm run dev:ui` | Inicia apenas o frontend |
+| `npm run dev:api` | Inicia apenas a API |
+| `npm run build` | Build para producao |
+| `npm run preview` | Preview da build |
+| `npm run test` | Roda testes unitarios |
+| `npm run test:e2e` | Roda testes E2E |
+| `npm run typecheck` | Verifica tipos TypeScript |
+| `npm run deploy` | Deploy para Cloudflare |
 
-## Variáveis de Ambiente
+## Contributing
 
-```env
-GENIUS_TOKEN=your_genius_token
-OPENAI_API_KEY=your_openai_key
-OLLAMA_URL=http://localhost:11434
-OLLAMA_MODEL=mistral:latest
-```
+1. Fork o projeto
+2. Crie sua feature branch (`git checkout -b feature/nova-feature`)
+3. Commit suas mudancas (`git commit -m 'feat: adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
 
-## Custos
+## License
 
-| Fonte | Custo por Rima |
-|-------|----------------|
-| Ollama | R$ 0,00 (grátis) |
-| GPT-4o-mini | ~R$ 0,001 |
-| Fallback | R$ 0,00 (offline) |
-
-## Licença
-
-MIT License
-
----
-
-Desenvolvido com Claude Code
+MIT
