@@ -20,14 +20,20 @@ import { DrillComplete } from './pages/DrillComplete';
 import { Leaderboard } from './pages/Leaderboard';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
+import { NotFound } from './pages/NotFound';
+import { ErrorPage } from './pages/ErrorPage';
 
 // Components
 import { SplashLogo } from './components/Logo';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 type AuthScreen = 'login' | 'signup' | 'forgot-password';
-type AppScreen = 'home' | 'drills' | 'ranking' | 'profile' | 'settings';
+type AppScreen = 'home' | 'drills' | 'ranking' | 'profile' | 'settings' | 'notfound';
 type FlowScreen = 'onboarding' | 'select-level';
 type DrillScreen = 'play' | 'complete';
+
+// Valid paths for URL-based routing
+const validPaths = ['/', '/home', '/drills', '/ranking', '/profile', '/settings', '/login', '/signup'];
 
 interface DrillState {
   drillId: string;
@@ -64,6 +70,18 @@ export function AppRouter() {
   const [hasSelectedLevel, setHasSelectedLevel] = useState<boolean>(() => {
     return localStorage.getItem('ia-rimas-level-selected') === 'true';
   });
+
+  // Check for invalid URL paths
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    const isValidPath = validPaths.some(path =>
+      currentPath === path || currentPath.startsWith('/drill/')
+    );
+
+    if (!isValidPath && currentPath !== '/') {
+      setAppScreen('notfound');
+    }
+  }, []);
 
   // Handle first-time user flow
   useEffect(() => {
@@ -247,6 +265,14 @@ export function AppRouter() {
         />
       );
 
+    case 'notfound':
+      return (
+        <NotFound
+          onGoHome={() => setAppScreen('home')}
+          onGoDrills={() => setAppScreen('drills')}
+        />
+      );
+
     default:
       return (
         <Home
@@ -261,6 +287,17 @@ export function AppRouter() {
         />
       );
   }
+}
+
+/**
+ * App Router com Error Boundary
+ */
+export function AppRouterWithErrorBoundary() {
+  return (
+    <ErrorBoundary>
+      <AppRouter />
+    </ErrorBoundary>
+  );
 }
 
 export default AppRouter;
