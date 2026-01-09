@@ -87,7 +87,7 @@ tasks:
       - "Funções puras, sem side effects"
       - "Testes passando"
       - "Fórmula de XP documentada"
-    status: "pending"
+    status: "done"
 
   - id: "task_005"
     title: "Criar utilitário de Streak"
