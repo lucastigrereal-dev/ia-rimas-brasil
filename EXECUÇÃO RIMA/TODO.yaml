@@ -305,7 +305,7 @@ tasks:
       - "7 colunas (dom-sab)"
       - "5-6 linhas por mês"
       - "Cores: cinza, verde claro, verde médio, verde escuro"
-    status: "pending"
+    status: "done"
 
   - id: "task_015"
     title: "Criar componente ShareCard"
