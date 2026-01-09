@@ -3,7 +3,6 @@
  * @module pages/Profile
  */
 
-import React from 'react';
 import { Layout } from '../components/Layout';
 import { XPBar } from '../components/XPBar';
 import { StreakFire } from '../components/StreakFire';
@@ -32,7 +31,7 @@ const userBadges = [
 ];
 
 // Mock activity data (last 30 days)
-const mockActivity: Record<string, number> = {};
+const mockActivity: Array<{ date: string; drillsCompleted: number; xpEarned: number; minutesTrained: number }> = [];
 const today = new Date();
 for (let i = 0; i < 30; i++) {
   const date = new Date(today);
@@ -40,7 +39,13 @@ for (let i = 0; i < 30; i++) {
   const dateStr = date.toISOString().split('T')[0];
   // Random activity: 0-4 drills per day, more recent days more active
   if (Math.random() > 0.3 || i < 7) {
-    mockActivity[dateStr] = Math.floor(Math.random() * 4) + 1;
+    const drills = Math.floor(Math.random() * 4) + 1;
+    mockActivity.push({
+      date: dateStr,
+      drillsCompleted: drills,
+      xpEarned: drills * 50,
+      minutesTrained: drills * 5,
+    });
   }
 }
 
@@ -49,7 +54,7 @@ for (let i = 0; i < 30; i++) {
  */
 export function Profile({ onNavigate, onOpenSettings }: ProfileProps) {
   const { user } = useAuthContext();
-  const { state, computed } = useGameContext();
+  const gameContext = useGameContext();
 
   const earnedBadges = userBadges.filter((b) => b.earned);
   const pendingBadges = userBadges.filter((b) => !b.earned);
@@ -81,7 +86,7 @@ export function Profile({ onNavigate, onOpenSettings }: ProfileProps) {
           </div>
           {/* Level badge */}
           <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-sm font-bold border-2 border-gray-950">
-            {computed.level}
+            {gameContext.user?.level || 1}
           </div>
         </div>
 
@@ -93,9 +98,9 @@ export function Profile({ onNavigate, onOpenSettings }: ProfileProps) {
           {/* Quick stats */}
           <div className="flex items-center gap-4 mt-2">
             <div className="flex items-center gap-1">
-              <StreakFire streak={state.user?.stats?.streak || 0} size="sm" showLabel={false} />
+              <StreakFire streak={gameContext.user?.streak || 0} size="sm" showDays={false} />
               <span className="text-sm text-gray-400">
-                {state.user?.stats?.streak || 0} dias
+                {gameContext.user?.streak || 0} dias
               </span>
             </div>
             <div className="flex items-center gap-1">
@@ -124,16 +129,15 @@ export function Profile({ onNavigate, onOpenSettings }: ProfileProps) {
       <div className="bg-gray-900 rounded-xl p-4 border border-gray-800 mb-6">
         <div className="flex justify-between items-center mb-3">
           <span className="text-gray-400 text-sm">Progresso de Nível</span>
-          <span className="text-purple-400 font-medium">Nível {computed.level}</span>
+          <span className="text-purple-400 font-medium">Nível {gameContext.user?.level || 1}</span>
         </div>
         <XPBar
-          current={computed.xpInCurrentLevel}
-          max={computed.xpToNextLevel}
-          level={computed.level}
-          showLabel
+          currentXP={gameContext.user?.xp || 0}
+          level={gameContext.user?.level || 1}
+          showLevel
         />
         <p className="text-xs text-gray-500 mt-2 text-center">
-          {computed.xpToNextLevel - computed.xpInCurrentLevel} XP para o próximo nível
+          XP para o próximo nível
         </p>
       </div>
 
@@ -141,19 +145,19 @@ export function Profile({ onNavigate, onOpenSettings }: ProfileProps) {
       <div className="grid grid-cols-3 gap-3 mb-6">
         <div className="bg-gray-900 rounded-xl p-4 border border-gray-800 text-center">
           <p className="text-2xl font-bold text-purple-400">
-            {(state.user?.stats?.totalXP || 0).toLocaleString()}
+            {(gameContext.user?.xp || 0).toLocaleString()}
           </p>
           <p className="text-xs text-gray-500 mt-1">XP Total</p>
         </div>
         <div className="bg-gray-900 rounded-xl p-4 border border-gray-800 text-center">
           <p className="text-2xl font-bold text-green-400">
-            {state.user?.stats?.drillsCompleted || 0}
+            {gameContext.user?.drillsCompleted || 0}
           </p>
           <p className="text-xs text-gray-500 mt-1">Drills</p>
         </div>
         <div className="bg-gray-900 rounded-xl p-4 border border-gray-800 text-center">
           <p className="text-2xl font-bold text-orange-400">
-            {state.user?.stats?.maxStreak || 0}
+            {gameContext.user?.streak || 0}
           </p>
           <p className="text-xs text-gray-500 mt-1">Max Streak</p>
         </div>
@@ -163,7 +167,7 @@ export function Profile({ onNavigate, onOpenSettings }: ProfileProps) {
       <div className="mb-6">
         <h2 className="font-bold text-lg mb-3">Atividade</h2>
         <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
-          <ProgressCalendar activity={mockActivity} />
+          <ProgressCalendar activities={mockActivity} />
           <div className="flex justify-between items-center mt-3 text-xs text-gray-500">
             <span>Últimos 30 dias</span>
             <div className="flex items-center gap-1">
@@ -203,7 +207,7 @@ export function Profile({ onNavigate, onOpenSettings }: ProfileProps) {
               key={badge.id}
               className="bg-gray-900 rounded-xl p-3 border border-gray-800 text-center"
             >
-              <BadgeIcon icon={badge.icon} size="lg" earned />
+              <BadgeIcon badgeId={badge.icon as any} size="lg" unlocked />
               <p className="text-xs font-medium mt-2 truncate">{badge.name}</p>
             </div>
           ))}
@@ -219,7 +223,7 @@ export function Profile({ onNavigate, onOpenSettings }: ProfileProps) {
                   key={badge.id}
                   className="bg-gray-900/50 rounded-xl p-3 border border-gray-800/50 text-center opacity-60"
                 >
-                  <BadgeIcon icon={badge.icon} size="lg" earned={false} />
+                  <BadgeIcon badgeId={badge.icon as any} size="lg" unlocked={false} />
                   <p className="text-xs font-medium mt-2 truncate text-gray-500">{badge.name}</p>
                 </div>
               ))}

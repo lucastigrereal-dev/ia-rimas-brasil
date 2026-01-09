@@ -3,7 +3,7 @@
  * @module components/NotificationPermission
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNotificationPrompt } from '../hooks/useNotifications';
 
 interface NotificationPermissionProps {
@@ -154,7 +154,7 @@ function BenefitItem({ icon, text }: { icon: string; text: string }) {
  * Botão para ativar notificações (para Settings)
  */
 export function NotificationSettingsButton() {
-  const { shouldShow, canAskAgain, requestPermission } = useNotificationPrompt();
+  const { canAskAgain, requestPermission } = useNotificationPrompt();
   const [permission, setPermission] = useState<string>('default');
   const [isLoading, setIsLoading] = useState(false);
 

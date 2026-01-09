@@ -3,8 +3,7 @@
  * @module components/Loading/SkeletonProfile
  */
 
-import React from 'react';
-import { Skeleton, SkeletonAvatar, SkeletonText } from './Skeleton';
+import { Skeleton, SkeletonAvatar } from './Skeleton';
 import { SkeletonStatCard } from './SkeletonCard';
 import { SkeletonGrid } from './SkeletonList';
 

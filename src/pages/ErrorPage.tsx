@@ -3,7 +3,7 @@
  * @module pages/ErrorPage
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { ErrorInfo } from 'react';
 
 interface ErrorPageProps {

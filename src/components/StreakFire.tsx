@@ -1,6 +1,3 @@
-import React from 'react';
-import { getStreakStatus, type StreakStatus } from '../utils/streak';
-
 interface StreakFireProps {
   /** Número de dias consecutivos */
   streak: number;
@@ -26,7 +23,6 @@ export function StreakFire({
   showDays = true,
   className = '',
 }: StreakFireProps) {
-  const status = getStreakStatus(streak);
 
   // Cores baseadas no streak
   const getFireColors = (): { primary: string; secondary: string; glow: string } => {

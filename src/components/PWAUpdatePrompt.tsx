@@ -3,7 +3,6 @@
  * @module components/PWAUpdatePrompt
  */
 
-import React from 'react';
 
 interface PWAUpdatePromptProps {
   /** Mostra o prompt */

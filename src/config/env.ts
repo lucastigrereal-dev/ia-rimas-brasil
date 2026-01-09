@@ -68,7 +68,7 @@ export const analyticsConfig = {
 export function validateEnv(): void {
   try {
     // Força a validação das variáveis obrigatórias
-    const _ = firebaseConfig;
+    void firebaseConfig;
     console.log('[ENV] Environment variables validated successfully');
   } catch (error) {
     console.error('[ENV] Environment validation failed:', error);

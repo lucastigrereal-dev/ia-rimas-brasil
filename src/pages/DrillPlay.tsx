@@ -3,7 +3,7 @@
  * @module pages/DrillPlay
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { DrillLayout } from '../components/Layout';
 import { useTimer } from '../hooks/useTimer';
 

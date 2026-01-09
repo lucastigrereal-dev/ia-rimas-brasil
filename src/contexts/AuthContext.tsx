@@ -3,7 +3,7 @@
  * @module contexts/AuthContext
  */
 
-import React, { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import type { User } from 'firebase/auth';
 import type { UserDocument } from '../types/firebase';
@@ -32,6 +32,8 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   /** Recuperar senha */
   forgotPassword: (email: string) => Promise<void>;
+  /** Recuperar senha (alias) */
+  resetPassword: (email: string) => Promise<void>;
   /** Limpa erro */
   clearError: () => void;
   /** Recarrega dados do usuário */

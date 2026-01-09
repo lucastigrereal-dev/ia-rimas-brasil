@@ -7,7 +7,7 @@ import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getAnalytics, type Analytics, isSupported } from 'firebase/analytics';
-import { firebaseConfig as envFirebaseConfig, isDevelopment } from '../config/env';
+import { firebaseConfig as envFirebaseConfig } from '../config/env';
 
 /**
  * Configuração do Firebase via variáveis de ambiente centralizadas

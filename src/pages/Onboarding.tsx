@@ -3,7 +3,7 @@
  * @module pages/Onboarding
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface OnboardingProps {
   /** Callback ao finalizar */

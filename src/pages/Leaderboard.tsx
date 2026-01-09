@@ -3,7 +3,7 @@
  * @module pages/Leaderboard
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Layout } from '../components/Layout';
 import { LeaderboardRow } from '../components/LeaderboardRow';
 import { useAuthContext } from '../contexts/AuthContext';
@@ -76,7 +76,7 @@ const mockLeaderboard: Record<LeaderboardPeriod, LeaderboardEntry[]> = {
  * Página de Ranking
  */
 export function Leaderboard({ onNavigate, onViewProfile }: LeaderboardProps) {
-  const { user } = useAuthContext();
+  const { user: _user } = useAuthContext();
   const [period, setPeriod] = useState<LeaderboardPeriod>('weekly');
 
   const leaderboard = mockLeaderboard[period];
@@ -180,13 +180,14 @@ export function Leaderboard({ onNavigate, onViewProfile }: LeaderboardProps) {
         {rest.map((entry) => (
           <LeaderboardRow
             key={entry.userId}
-            rank={entry.rank}
-            name={entry.displayName}
-            xp={entry.xp}
-            level={entry.level}
-            streak={entry.streak}
+            user={{
+              id: entry.userId,
+              displayName: entry.displayName,
+              photoURL: entry.photoURL,
+              score: entry.xp,
+            }}
+            position={entry.rank}
             isCurrentUser={entry.userId === 'current'}
-            photoURL={entry.photoURL}
             onClick={() => onViewProfile?.(entry.userId)}
           />
         ))}
@@ -197,11 +198,13 @@ export function Leaderboard({ onNavigate, onViewProfile }: LeaderboardProps) {
         <div className="mt-6 pt-4 border-t border-gray-800">
           <p className="text-xs text-gray-500 text-center mb-2">Sua posição</p>
           <LeaderboardRow
-            rank={currentUserEntry.rank}
-            name={currentUserEntry.displayName}
-            xp={currentUserEntry.xp}
-            level={currentUserEntry.level}
-            streak={currentUserEntry.streak}
+            user={{
+              id: currentUserEntry.userId,
+              displayName: currentUserEntry.displayName,
+              photoURL: currentUserEntry.photoURL,
+              score: currentUserEntry.xp,
+            }}
+            position={currentUserEntry.rank}
             isCurrentUser
           />
         </div>

@@ -5,7 +5,7 @@
 
 import { useEffect, useCallback, useRef } from 'react';
 import { useAuthContext } from '../contexts/AuthContext';
-import analytics, {
+import _analytics, {
   trackScreenView,
   trackSignUp,
   trackLogin,

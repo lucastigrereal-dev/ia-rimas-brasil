@@ -3,7 +3,6 @@
  * @module components/BottomNav
  */
 
-import React from 'react';
 
 type NavItem = 'home' | 'drills' | 'ranking' | 'profile';
 

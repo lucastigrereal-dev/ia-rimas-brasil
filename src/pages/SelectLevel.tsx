@@ -3,7 +3,7 @@
  * @module pages/SelectLevel
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 type SkillLevel = 'beginner' | 'intermediate' | 'advanced';
 

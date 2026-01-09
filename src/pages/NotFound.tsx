@@ -3,7 +3,6 @@
  * @module pages/NotFound
  */
 
-import React from 'react';
 
 interface NotFoundProps {
   /** Navegar para home */

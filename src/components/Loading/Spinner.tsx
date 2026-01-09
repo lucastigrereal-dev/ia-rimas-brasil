@@ -3,7 +3,6 @@
  * @module components/Loading/Spinner
  */
 
-import React from 'react';
 
 type SpinnerSize = 'sm' | 'md' | 'lg' | 'xl';
 type SpinnerColor = 'primary' | 'white' | 'gray';

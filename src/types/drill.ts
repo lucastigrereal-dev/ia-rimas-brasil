@@ -6,7 +6,7 @@
 /**
  * Categorias de drill disponíveis no sistema
  */
-export type DrillCategory = 'som' | 'ritmo' | 'sentido' | 'batalha';
+export type DrillCategory = 'rimas' | 'flow' | 'punchline' | 'batalha';
 
 /**
  * Nível de dificuldade do drill (1 a 5)
@@ -89,8 +89,8 @@ export interface DrillAttempt {
  * Mapeamento de categoria para emoji
  */
 export const DRILL_CATEGORY_EMOJI: Record<DrillCategory, string> = {
-  som: '🎵',
-  ritmo: '🎶',
-  sentido: '💬',
+  rimas: '🎵',
+  flow: '🎶',
+  punchline: '💬',
   batalha: '⚔️',
 };

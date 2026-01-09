@@ -6,9 +6,7 @@ import path from 'path';
 import { z } from 'zod';
 import {
   GerarRimaInputSchema,
-  HistoricoQuerySchema,
   type GerarRimaInput,
-  type HistoricoQuery,
 } from './schemas/rima.schemas';
 
 // Schemas de validação para endpoints específicos

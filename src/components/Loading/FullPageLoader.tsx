@@ -3,7 +3,6 @@
  * @module components/Loading/FullPageLoader
  */
 
-import React from 'react';
 
 interface FullPageLoaderProps {
   /** Mensagem de loading */

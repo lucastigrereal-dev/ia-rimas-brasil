@@ -3,8 +3,9 @@
  * @module pages/DrillComplete
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ShareCard } from '../components/ShareCard';
+import { useAuthContext } from '../contexts/AuthContext';
 
 interface DrillResult {
   drillId: string;
@@ -82,8 +83,9 @@ export function DrillComplete({
   onBack,
   onPlayAgain,
   onNextDrill,
-  onShare,
+  onShare: _onShare,
 }: DrillCompleteProps) {
+  const { user, userData } = useAuthContext();
   const [showAnimation, setShowAnimation] = useState(false);
   const [animatedXP, setAnimatedXP] = useState(0);
   const [showShareCard, setShowShareCard] = useState(false);
@@ -282,10 +284,12 @@ export function DrillComplete({
         >
           <div onClick={(e) => e.stopPropagation()}>
             <ShareCard
-              title={drillTitle}
-              score={result.score}
-              stars={result.stars}
-              xpEarned={result.xpEarned}
+              userName={user?.displayName || 'MC Anônimo'}
+              level={userData?.level || 1}
+              streak={userData?.streak || 0}
+              dailyScore={result.score}
+              totalXP={userData?.xp}
+              drillsToday={1}
             />
             <button
               onClick={() => setShowShareCard(false)}

@@ -3,7 +3,6 @@
  * @module components/Logo
  */
 
-import React from 'react';
 
 type LogoVariant = 'full' | 'icon' | 'text';
 type LogoSize = 'sm' | 'md' | 'lg' | 'xl';

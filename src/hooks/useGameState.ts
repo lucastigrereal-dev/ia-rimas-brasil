@@ -5,9 +5,9 @@
 
 import { useMemo, useCallback } from 'react';
 import { useGameContext } from '../contexts/GameContext';
-import { getXPProgress, getXPToNextLevel, getLevelFromXP } from '../utils/xp';
-import { getStreakInfo, getStreakStatus } from '../utils/streak';
-import type { ComputedStats, DrillResult } from '../types/gameState';
+import { getXPProgress, getXPToNextLevel } from '../utils/xp';
+import { getStreakInfo } from '../utils/streak';
+import type { ComputedStats } from '../types/gameState';
 import type { DrillDocument, ProgressDocument } from '../types/firebase';
 
 /**

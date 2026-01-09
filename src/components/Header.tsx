@@ -3,7 +3,6 @@
  * @module components/Header
  */
 
-import React from 'react';
 import { XPBar } from './XPBar';
 import { StreakFire } from './StreakFire';
 import { useGameState } from '../hooks/useGameState';

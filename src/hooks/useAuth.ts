@@ -14,7 +14,6 @@ import {
   resetPassword,
   getCurrentUser,
   isAuthenticated as checkIsAuthenticated,
-  AuthError,
 } from '../services/auth';
 import { getUser, createUser } from '../services/firebaseDB';
 import type { UserDocument } from '../types/firebase';
@@ -49,6 +48,8 @@ interface UseAuthReturn extends UseAuthState {
   signOut: () => Promise<void>;
   /** Recuperar senha */
   forgotPassword: (email: string) => Promise<void>;
+  /** Recuperar senha (alias) */
+  resetPassword: (email: string) => Promise<void>;
   /** Limpa erro */
   clearError: () => void;
   /** Recarrega dados do usuário */
@@ -258,6 +259,7 @@ export function useAuth(): UseAuthReturn {
     signInGoogle,
     signOut,
     forgotPassword,
+    resetPassword: forgotPassword, // Alias
     clearError,
     refreshUserData,
   };

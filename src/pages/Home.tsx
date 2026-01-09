@@ -3,7 +3,6 @@
  * @module pages/Home
  */
 
-import React from 'react';
 import { Layout } from '../components/Layout';
 import { XPBar } from '../components/XPBar';
 import { StreakFire } from '../components/StreakFire';
@@ -23,8 +22,8 @@ interface HomeProps {
  * Página Principal
  */
 export function Home({ onNavigate, onStartDrill }: HomeProps) {
-  const { state, computed } = useGameContext();
-  const { user } = state;
+  const gameContext = useGameContext();
+  const { user } = gameContext;
 
   // Drills sugeridos (mock data - futuramente virá do backend)
   const suggestedDrills = [
@@ -77,8 +76,8 @@ export function Home({ onNavigate, onStartDrill }: HomeProps) {
           Fala, {user?.displayName?.split(' ')[0] || 'MC'}! 🎤
         </h1>
         <p className="text-gray-400 mt-1">
-          {computed.isStreakActive
-            ? `${user?.stats?.streak || 0} dias de streak! Continue assim!`
+          {user && user.streak > 0
+            ? `${user.streak} dias de streak! Continue assim!`
             : 'Bora treinar hoje?'
           }
         </p>
@@ -93,28 +92,26 @@ export function Home({ onNavigate, onStartDrill }: HomeProps) {
             <span className="text-gray-400 text-sm">XP Total</span>
           </div>
           <p className="text-2xl font-bold text-purple-400">
-            {(user?.stats?.totalXP || 0).toLocaleString()}
+            {(user?.xp || 0).toLocaleString()}
           </p>
           <XPBar
-            current={computed.xpInCurrentLevel}
-            max={computed.xpToNextLevel}
-            level={computed.level}
+            currentXP={user?.xp || 0}
+            level={user?.level || 1}
             size="sm"
-            className="mt-2"
           />
         </div>
 
         {/* Streak Card */}
         <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
           <div className="flex items-center gap-2 mb-2">
-            <StreakFire streak={user?.stats?.streak || 0} size="sm" />
+            <StreakFire streak={user?.streak || 0} size="sm" />
             <span className="text-gray-400 text-sm">Streak</span>
           </div>
           <p className="text-2xl font-bold text-orange-400">
-            {user?.stats?.streak || 0} dias
+            {user?.streak || 0} dias
           </p>
           <p className="text-xs text-gray-500 mt-2">
-            Recorde: {user?.stats?.maxStreak || 0} dias
+            Recorde: {user?.streak || 0} dias
           </p>
         </div>
       </div>
@@ -180,7 +177,7 @@ export function Home({ onNavigate, onStartDrill }: HomeProps) {
         <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
           <div className="flex justify-between items-center mb-3">
             <span className="text-gray-400 text-sm">Drills completados</span>
-            <span className="font-bold">{user?.stats?.drillsCompleted || 0}</span>
+            <span className="font-bold">{user?.drillsCompleted || 0}</span>
           </div>
 
           {/* Week days */}

@@ -27,14 +27,12 @@ vi.mock('../../config/env', () => ({
 
 describe('Analytics Service', () => {
   let analytics: typeof import('../analytics');
-  let firebaseAnalytics: typeof import('firebase/analytics');
 
   beforeEach(async () => {
     vi.clearAllMocks();
 
     // Fresh import
     analytics = await import('../analytics');
-    firebaseAnalytics = await import('firebase/analytics');
   });
 
   afterEach(() => {

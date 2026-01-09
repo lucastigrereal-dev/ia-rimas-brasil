@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ErrorBoundary, withErrorBoundary } from '../ErrorBoundary';
 
 // Component that throws an error
@@ -83,7 +83,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('allows retrying after error', () => {
-    const { rerender } = render(
+    render(
       <ErrorBoundary>
         <ThrowError shouldThrow={true} />
       </ErrorBoundary>

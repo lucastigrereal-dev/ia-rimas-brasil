@@ -1,18 +1,33 @@
-import React from 'react';
-import type { Drill, DrillCategory, DrillDifficulty } from '../types/drill';
+import type { DrillCategory } from '../types/drill';
 import { DRILL_CATEGORY_EMOJI } from '../types/drill';
 
-type DrillStatus = 'locked' | 'available' | 'completed';
-
 interface DrillCardProps {
-  /** Dados do drill */
-  drill: Drill;
-  /** Status do drill para o usuário */
-  status?: DrillStatus;
-  /** Estrelas conquistadas (0-3) */
-  stars?: 0 | 1 | 2 | 3;
-  /** Callback ao clicar no botão jogar */
-  onPlay?: (drillId: string) => void;
+  /** ID do drill */
+  id?: string;
+  /** Título do drill */
+  title: string;
+  /** Descrição do drill */
+  description: string;
+  /** Categoria do drill */
+  category: DrillCategory;
+  /** Dificuldade (easy, medium, hard) */
+  difficulty: 'easy' | 'medium' | 'hard';
+  /** Recompensa de XP */
+  xpReward: number;
+  /** Duração estimada */
+  duration?: string;
+  /** Progresso (opcional) */
+  progress?: number;
+  /** Total de questões (opcional) */
+  total?: number;
+  /** Se está bloqueado */
+  isLocked?: boolean;
+  /** Se é novo */
+  isNew?: boolean;
+  /** Se é diário */
+  isDaily?: boolean;
+  /** Callback ao clicar */
+  onClick?: () => void;
   /** Classes adicionais */
   className?: string;
 }
@@ -26,62 +41,47 @@ interface DrillCardProps {
  * - completed: Verde, estrelas, replay
  */
 export function DrillCard({
-  drill,
-  status = 'available',
-  stars = 0,
-  onPlay,
+  id: _id,
+  title,
+  description,
+  category,
+  difficulty,
+  xpReward,
+  duration,
+  progress,
+  total,
+  isLocked = false,
+  isNew = false,
+  isDaily = false,
+  onClick,
   className = '',
 }: DrillCardProps) {
-  const isLocked = status === 'locked';
-  const isCompleted = status === 'completed';
+  const isCompleted = progress !== undefined && total !== undefined && progress >= total;
 
   // Cor de fundo baseada na categoria
   const getCategoryGradient = (category: DrillCategory): string => {
     const gradients: Record<DrillCategory, string> = {
-      som: 'from-purple-600 to-pink-600',
-      ritmo: 'from-blue-600 to-cyan-600',
-      sentido: 'from-green-600 to-emerald-600',
+      rimas: 'from-purple-600 to-pink-600',
+      flow: 'from-blue-600 to-cyan-600',
+      punchline: 'from-green-600 to-emerald-600',
       batalha: 'from-red-600 to-orange-600',
     };
     return gradients[category];
   };
 
-  // Renderiza estrelas de dificuldade
-  const renderDifficultyStars = (difficulty: DrillDifficulty) => {
-    return (
-      <div className="flex gap-0.5" title={`Dificuldade: ${difficulty}/5`}>
-        {[1, 2, 3, 4, 5].map((n) => (
-          <span
-            key={n}
-            className={`text-xs ${n <= difficulty ? 'text-yellow-400' : 'text-gray-600'}`}
-          >
-            ★
-          </span>
-        ))}
-      </div>
-    );
-  };
-
-  // Renderiza estrelas conquistadas
-  const renderCompletedStars = () => {
-    if (!isCompleted) return null;
-    return (
-      <div className="flex gap-1 mt-2">
-        {[1, 2, 3].map((n) => (
-          <span
-            key={n}
-            className={`text-lg ${n <= stars ? 'text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]' : 'text-gray-600'}`}
-          >
-            ★
-          </span>
-        ))}
-      </div>
-    );
+  // Renderiza indicador de dificuldade
+  const getDifficultyLabel = () => {
+    const labels = {
+      easy: { text: 'Fácil', color: 'text-green-400' },
+      medium: { text: 'Médio', color: 'text-yellow-400' },
+      hard: { text: 'Difícil', color: 'text-red-400' },
+    };
+    return labels[difficulty];
   };
 
   const handleClick = () => {
-    if (!isLocked && onPlay) {
-      onPlay(drill.id);
+    if (!isLocked && onClick) {
+      onClick();
     }
   };
 
@@ -110,44 +110,66 @@ export function DrillCard({
       <div
         className={`
           px-4 py-2 bg-gradient-to-r
-          ${isLocked ? 'from-gray-700 to-gray-600' : getCategoryGradient(drill.category)}
+          ${isLocked ? 'from-gray-700 to-gray-600' : getCategoryGradient(category)}
         `}
       >
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-white font-medium">
-            <span className="text-lg">{DRILL_CATEGORY_EMOJI[drill.category]}</span>
-            <span className="capitalize">{drill.category}</span>
+            <span className="text-lg">{DRILL_CATEGORY_EMOJI[category]}</span>
+            <span className="capitalize">{category}</span>
           </span>
-          {renderDifficultyStars(drill.difficulty)}
+          <span className={`text-xs font-medium ${getDifficultyLabel().color}`}>
+            {getDifficultyLabel().text}
+          </span>
         </div>
       </div>
 
       {/* Corpo do card */}
       <div className="p-4">
-        <h3 className={`font-bold text-lg mb-1 ${isLocked ? 'text-gray-500' : 'text-white'}`}>
-          {isLocked ? '???' : drill.title}
-        </h3>
+        <div className="flex items-start justify-between mb-1">
+          <h3 className={`font-bold text-lg ${isLocked ? 'text-gray-500' : 'text-white'}`}>
+            {isLocked ? '???' : title}
+          </h3>
+          {isNew && !isLocked && (
+            <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">NOVO</span>
+          )}
+          {isDaily && !isLocked && (
+            <span className="text-xs bg-yellow-500 text-white px-2 py-0.5 rounded-full">DIÁRIO</span>
+          )}
+        </div>
 
         <p className={`text-sm mb-3 line-clamp-2 ${isLocked ? 'text-gray-600' : 'text-gray-400'}`}>
-          {isLocked ? 'Complete os drills anteriores para desbloquear' : drill.description}
+          {isLocked ? 'Complete os drills anteriores para desbloquear' : description}
         </p>
 
-        {/* XP Reward */}
+        {/* XP e duração */}
         <div className="flex items-center justify-between">
           <span className={`text-sm font-medium ${isLocked ? 'text-gray-600' : 'text-purple-400'}`}>
-            +{drill.xpReward} XP
+            +{xpReward} XP
           </span>
 
-          {/* Tempo limite se houver */}
-          {drill.timeLimit && !isLocked && (
+          {duration && !isLocked && (
             <span className="text-xs text-gray-500 flex items-center gap-1">
-              ⏱️ {Math.floor(drill.timeLimit / 60)}:{String(drill.timeLimit % 60).padStart(2, '0')}
+              ⏱️ {duration}
             </span>
           )}
         </div>
 
-        {/* Estrelas conquistadas */}
-        {renderCompletedStars()}
+        {/* Progresso */}
+        {progress !== undefined && total !== undefined && !isLocked && (
+          <div className="mt-3">
+            <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
+              <span>Progresso</span>
+              <span>{progress}/{total}</span>
+            </div>
+            <div className="w-full bg-gray-700 rounded-full h-1.5">
+              <div
+                className="bg-purple-500 h-1.5 rounded-full transition-all"
+                style={{ width: `${(progress / total) * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Botão / Status */}
@@ -162,7 +184,7 @@ export function DrillCard({
             className="w-full py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
             onClick={(e) => {
               e.stopPropagation();
-              onPlay?.(drill.id);
+              onClick?.();
             }}
           >
             <span>🔄</span>
@@ -173,7 +195,7 @@ export function DrillCard({
             className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-lg font-bold transition-all shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50"
             onClick={(e) => {
               e.stopPropagation();
-              onPlay?.(drill.id);
+              onClick?.();
             }}
           >
             Jogar

@@ -3,9 +3,8 @@
  * @module AppRouter
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthContext } from './contexts/AuthContext';
-import { useGameContext } from './contexts/GameContext';
 
 // Pages
 import { Login } from './pages/Login';
@@ -21,7 +20,6 @@ import { Leaderboard } from './pages/Leaderboard';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
 import { NotFound } from './pages/NotFound';
-import { ErrorPage } from './pages/ErrorPage';
 
 // Components
 import { SplashLogo } from './components/Logo';
@@ -53,7 +51,6 @@ interface DrillState {
  */
 export function AppRouter() {
   const { user, loading: authLoading } = useAuthContext();
-  const { state: gameState } = useGameContext();
 
   // Screens state
   const [authScreen, setAuthScreen] = useState<AuthScreen>('login');

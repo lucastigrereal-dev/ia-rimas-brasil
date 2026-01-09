@@ -3,7 +3,6 @@
  * @module components/Loading/SkeletonCard
  */
 
-import React from 'react';
 import { Skeleton, SkeletonText, SkeletonAvatar } from './Skeleton';
 
 /**

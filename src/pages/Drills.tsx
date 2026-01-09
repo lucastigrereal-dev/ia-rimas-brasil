@@ -3,7 +3,7 @@
  * @module pages/Drills
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Layout } from '../components/Layout';
 import { DrillCard } from '../components/DrillCard';
 

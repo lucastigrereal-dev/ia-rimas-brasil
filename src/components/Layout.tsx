@@ -3,7 +3,7 @@
  * @module components/Layout
  */
 
-import React, { type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Header } from './Header';
 import { BottomNav } from './BottomNav';
 

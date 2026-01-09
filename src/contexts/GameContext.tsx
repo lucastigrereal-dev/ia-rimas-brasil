@@ -3,7 +3,7 @@
  * @module contexts/GameContext
  */
 
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -25,13 +25,11 @@ import {
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import type {
   GameState,
-  GameActions,
   GameContextType,
 } from '../types/gameState';
 import type {
   DrillDocument,
   ProgressDocument,
-  LeaderboardEntry,
 } from '../types/firebase';
 
 /**

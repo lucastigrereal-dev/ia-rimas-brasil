@@ -3,7 +3,6 @@
  * @module components/Loading/SkeletonList
  */
 
-import React from 'react';
 import { SkeletonDrillCard, SkeletonLeaderboardRow, SkeletonStatCard } from './SkeletonCard';
 
 interface SkeletonListProps {

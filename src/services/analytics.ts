@@ -3,8 +3,8 @@
  * @module services/analytics
  */
 
-import { getAnalytics, logEvent, setUserId, setUserProperties, type Analytics } from 'firebase/analytics';
-import { getFirebaseApp, initializeAnalytics } from './firebase';
+import { logEvent, setUserId, setUserProperties, type Analytics } from 'firebase/analytics';
+import { initializeAnalytics } from './firebase';
 import { isProduction, isDevelopment } from '../config/env';
 
 let analytics: Analytics | null = null;
