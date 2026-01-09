@@ -201,7 +201,7 @@ tasks:
       - "Top 3 tem estilo especial"
       - "Highlight se for o usuário atual"
       - "Animação de entrada"
-    status: "pending"
+    status: "done"
 
   - id: "task_010"
     title: "Criar componente BadgeIcon"
