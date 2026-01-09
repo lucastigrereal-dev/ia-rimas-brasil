@@ -31,7 +31,7 @@ tasks:
       - "Interface User exportada"
       - "Todos os campos tipados corretamente"
       - "Comentários JSDoc em cada campo"
-    status: "pending"
+    status: "done"
 
   - id: "task_002"
     title: "Criar tipo Drill completo"
