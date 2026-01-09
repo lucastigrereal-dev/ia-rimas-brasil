@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+﻿import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { zValidator } from '@hono/zod-validator';
 import Database from 'better-sqlite3';
@@ -14,9 +14,7 @@ import {
 // Schemas de validação para endpoints específicos
 const BuscaAvancadaSchema = z.object({
   palavra: z.string().optional(),
-  tipo: z.enum(['perfeita', 'consoante', 'toante', 'interna'], {
-    invalid_type_error: 'Tipo inválido. Use: perfeita, consoante, toante ou interna',
-  }).optional(),
+  tipo: z.enum(['perfeita', 'consoante', 'toante', 'interna']).optional(),
   artista_id: z.number().int().positive().optional(),
   qualidade_min: z.number().min(0).max(100).optional(),
   limite: z.number().int().positive().max(100).optional().default(50),

@@ -1,4 +1,4 @@
-import OpenAI from 'openai'
+﻿import OpenAI from 'openai'
 import { getDB, type Rima, type Letra } from './database'
 
 // Ollama config
