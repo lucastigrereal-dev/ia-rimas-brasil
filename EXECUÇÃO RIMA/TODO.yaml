@@ -106,7 +106,7 @@ tasks:
       - "Lógica de datas correta"
       - "Streak reseta se pular 1 dia"
       - "Bônus máximo de 70%"
-    status: "pending"
+    status: "done"
 
   # ═══════════════════════════════════════════════════════════════
   # P1 - IMPORTANTE (fazer depois do P0)
