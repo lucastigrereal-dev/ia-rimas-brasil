@@ -7,19 +7,19 @@ import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getAnalytics, type Analytics, isSupported } from 'firebase/analytics';
-import type { FirebaseConfig } from '../types/firebase';
+import { firebaseConfig as envFirebaseConfig, isDevelopment } from '../config/env';
 
 /**
- * Configuração do Firebase via variáveis de ambiente
+ * Configuração do Firebase via variáveis de ambiente centralizadas
  */
-const firebaseConfig: FirebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+const firebaseConfig = {
+  apiKey: envFirebaseConfig.apiKey,
+  authDomain: envFirebaseConfig.authDomain,
+  projectId: envFirebaseConfig.projectId,
+  storageBucket: envFirebaseConfig.storageBucket,
+  messagingSenderId: envFirebaseConfig.messagingSenderId,
+  appId: envFirebaseConfig.appId,
+  measurementId: envFirebaseConfig.measurementId,
 };
 
 /**
