@@ -285,7 +285,7 @@ tasks:
       - "Funciona com português BR"
       - "Trata acentos corretamente"
       - "Performance OK (< 10ms)"
-    status: "pending"
+    status: "done"
 
   - id: "task_014"
     title: "Criar componente ProgressCalendar"
