@@ -68,7 +68,7 @@ export interface UserSettings {
  */
 export interface ProgressDocument {
   id: string;
-  oderId: string;
+  userId: string;
   drillId: string;
   attempts: number;
   bestScore: number;
