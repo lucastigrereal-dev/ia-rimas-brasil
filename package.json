@@ -11,6 +11,8 @@
     "preview": "vite preview --port 3000",
     "deploy": "npm run build && wrangler pages deploy dist",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "setup-fts": "tsx night-crawler/scripts/setup-fts5.ts",
     "generate": "tsx night-crawler/src/cli.ts",
     "test:generator": "vitest run --config night-crawler/vitest.config.ts",

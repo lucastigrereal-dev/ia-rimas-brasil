@@ -326,7 +326,7 @@ tasks:
       - "Fundo escuro com gradiente"
       - "Logo do app"
       - "Hashtag #RimaQueVicia"
-    status: "pending"
+    status: "done"
 
   # ═══════════════════════════════════════════════════════════════
   # TESTES (rodar em paralelo)
