@@ -245,7 +245,7 @@ tasks:
       - "Genérico: useLocalStorage<T>(key, defaultValue)"
       - "Trata erros de parse"
       - "Testes passando"
-    status: "pending"
+    status: "done"
 
   - id: "task_012"
     title: "Criar hook useTimer"
