@@ -221,7 +221,7 @@ tasks:
       - "Suporta todos os badges do sistema"
       - "Grayscale quando bloqueado"
       - "Tooltip funcional"
-    status: "pending"
+    status: "done"
 
   # ═══════════════════════════════════════════════════════════════
   # P2 - DESEJÁVEL (fazer se sobrar tempo)
