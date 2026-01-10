@@ -1,4 +1,4 @@
-import OpenAI from 'openai'
+﻿import OpenAI from 'openai'
 import { getDB, type Rima, type Letra } from './database'
 
 // Ollama config
@@ -38,7 +38,7 @@ export async function checkOllama(): Promise<{ ok: boolean; model?: string; erro
     const response = await fetch(OLLAMA_URL + '/api/tags')
     if (!response.ok) return { ok: false, error: 'Ollama not responding' }
     const data = await response.json()
-    const hasModel = data.models?.some(m => m.name === OLLAMA_MODEL)
+    const hasModel = data.models?.some((_m: any) => _m.name === OLLAMA_MODEL)
     return { ok: hasModel, model: OLLAMA_MODEL, error: hasModel ? undefined : 'Model not found' }
   } catch (error: any) {
     return { ok: false, error: error.message }
@@ -83,7 +83,7 @@ export function getOpenAI(): OpenAI | null {
 }
 
 // Buscar rimas relevantes do banco
-function buscarRimasContexto(tema: string, estilo: string, limit = 30): Rima[] {
+function buscarRimasContexto(_tema: string, _estilo: string, limit = 30): Rima[] {
   const db = getDB()
 
   // Buscar rimas de alta qualidade

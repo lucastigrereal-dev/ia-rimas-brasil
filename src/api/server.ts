@@ -1,4 +1,4 @@
-import 'dotenv/config'
+﻿import 'dotenv/config'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
@@ -65,33 +65,34 @@ function analisarRimas(letra: string) {
 }
 
 // Funcao para gerar rimas (template - sera substituido por GPT)
-function gerarRima(tema: string, estilo: string) {
+// @ts-ignore - Unused for now, will be replaced by GPT implementation
+function _gerarRima(_tema: string, _estilo: string) {
   const templates: Record<string, string[]> = {
     agressivo: [
-      `No ${tema} eu sou rei, minha palavra e lei`,
+      `No ${_tema} eu sou rei, minha palavra e lei`,
       `Enquanto voce dorme, eu to no corre fiel`,
       `Meu verso e pesado, flow calibrado`,
       `Na batalha da vida, eu sou o mais cotado`,
     ],
     tecnico: [
-      `${tema} no sangue, rima na veia`,
+      `${_tema} no sangue, rima na veia`,
       `Cada verso que eu solto e uma nova ideia`,
       `Tecnica apurada, flow sem freio`,
       `No game do rap, eu domino o meio`,
     ],
     filosofico: [
-      `${tema} me ensina, a vida e professor`,
+      `${_tema} me ensina, a vida e professor`,
       `Cada cicatriz que eu tenho conta uma dor`,
       `Mas no concreto eu aprendi o valor`,
       `De cada batalha vencida com amor`,
     ],
   }
 
-  const escolhido = templates[estilo] || templates.agressivo
+  const escolhido = templates[_estilo] || templates.agressivo
 
   return {
-    tema,
-    estilo,
+    tema: _tema,
+    estilo: _estilo,
     conteudo: escolhido.join('\n'),
     score: Math.random() * 2 + 8,
     data: new Date().toISOString(),
@@ -370,7 +371,7 @@ app.post('/api/rimas/gerar', zValidator('json', GerarRimaInputSchema), async (c)
 
 // GET /api/rimas/historico - Historico de rimas geradas
 app.get('/api/rimas/historico', zValidator('query', HistoricoQuerySchema), (c) => {
-  const { limit, usuario_id } = c.req.valid('query')
+  const { limit, usuario_id: _usuario_id } = c.req.valid('query')
 
   const rimas = db.getRimasGeradas(limit)
 

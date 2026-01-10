@@ -55,3 +55,4 @@ Exemplo:
 [21:30] PRINCIPAL: OK - Crawler 787 letras/26.6k rimas (15.7%), 9 artistas processados
 [21:36] UI_REDESIGN: COMPLETO - App rodando em localhost:5555 com API em 12345
 [22:06] OLLAMA: OK - Ollama real integrado no /api/rimas/gerar com mistral:latest, fallback GPT/templates
+[00:12] PRINCIPAL: DONE - Crawler finalizado! 3.442 letras, 116.529 rimas, 50 artistas em 3h37min

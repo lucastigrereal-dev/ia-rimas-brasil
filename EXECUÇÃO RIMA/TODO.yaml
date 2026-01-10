@@ -1,0 +1,395 @@
+# 📋 TODO.yaml - Fila de Tarefas para Modo Noturno
+# IA Rimas Brasil - Tarefas Automatizáveis
+
+# Metadados
+version: "1.0.0"
+updated: "2026-01-09"
+project: "ia-rimas-brasil"
+
+# Tarefas Ordenadas por Prioridade
+tasks:
+  # ═══════════════════════════════════════════════════════════════
+  # P0 - CRÍTICO (fazer primeiro)
+  # ═══════════════════════════════════════════════════════════════
+  
+  - id: "task_001"
+    title: "Criar tipo User completo"
+    description: |
+      Criar arquivo src/types/user.ts com interface User contendo:
+      - id, email, displayName, photoURL
+      - level, xp, streak, streakBest
+      - drillsCompleted, totalScore
+      - badges (array de strings)
+      - createdAt, lastActive
+    priority: 1
+    category: "types"
+    difficulty: 1
+    estimated_minutes: 10
+    files_to_create:
+      - "src/types/user.ts"
+    acceptance_criteria:
+      - "Interface User exportada"
+      - "Todos os campos tipados corretamente"
+      - "Comentários JSDoc em cada campo"
+    status: "done"
+
+  - id: "task_002"
+    title: "Criar tipo Drill completo"
+    description: |
+      Criar arquivo src/types/drill.ts com interfaces:
+      - Drill: id, title, description, category, difficulty, xpReward
+      - DrillContent: instructions, examples, words
+      - DrillCategory: 'som' | 'ritmo' | 'sentido' | 'batalha'
+    priority: 1
+    category: "types"
+    difficulty: 1
+    estimated_minutes: 10
+    files_to_create:
+      - "src/types/drill.ts"
+    acceptance_criteria:
+      - "Interface Drill exportada"
+      - "Enum DrillCategory exportado"
+      - "Tipos bem documentados"
+    status: "done"
+
+  - id: "task_003"
+    title: "Criar tipo Progress"
+    description: |
+      Criar arquivo src/types/progress.ts com interfaces:
+      - DrillProgress: userId, drillId, attempts, bestScore, stars
+      - UserProgress: totalXp, level, streak, completedDrills
+    priority: 1
+    category: "types"
+    difficulty: 1
+    estimated_minutes: 10
+    files_to_create:
+      - "src/types/progress.ts"
+    acceptance_criteria:
+      - "Interfaces exportadas"
+      - "Stars tipado como 0 | 1 | 2 | 3"
+    status: "done"
+
+  - id: "task_004"
+    title: "Criar utilitário de XP"
+    description: |
+      Criar arquivo src/utils/xp.ts com funções:
+      - calculateXP(baseXP, modifiers): calcula XP total
+      - getXPForLevel(level): retorna XP necessário
+      - getLevelFromXP(xp): retorna nível atual
+      - getXPProgress(xp): retorna % para próximo nível
+    priority: 1
+    category: "utils"
+    difficulty: 2
+    estimated_minutes: 15
+    files_to_create:
+      - "src/utils/xp.ts"
+    acceptance_criteria:
+      - "Funções puras, sem side effects"
+      - "Testes passando"
+      - "Fórmula de XP documentada"
+    status: "done"
+
+  - id: "task_005"
+    title: "Criar utilitário de Streak"
+    description: |
+      Criar arquivo src/utils/streak.ts com funções:
+      - checkStreak(lastDate, today): verifica se streak continua
+      - calculateStreakBonus(streak): retorna % de bônus
+      - getStreakStatus(streak): retorna 'fire' | 'warm' | 'cold'
+    priority: 1
+    category: "utils"
+    difficulty: 2
+    estimated_minutes: 15
+    files_to_create:
+      - "src/utils/streak.ts"
+    acceptance_criteria:
+      - "Lógica de datas correta"
+      - "Streak reseta se pular 1 dia"
+      - "Bônus máximo de 70%"
+    status: "done"
+
+  # ═══════════════════════════════════════════════════════════════
+  # P1 - IMPORTANTE (fazer depois do P0)
+  # ═══════════════════════════════════════════════════════════════
+
+  - id: "task_006"
+    title: "Criar componente XPBar"
+    description: |
+      Criar componente React src/components/XPBar.tsx que mostra:
+      - Barra de progresso colorida (verde -> amarelo -> vermelho)
+      - XP atual / XP para próximo nível
+      - Nível atual
+      - Animação ao ganhar XP
+    priority: 2
+    category: "components"
+    difficulty: 2
+    estimated_minutes: 20
+    files_to_create:
+      - "src/components/XPBar.tsx"
+    dependencies:
+      - "task_004"
+    acceptance_criteria:
+      - "Recebe props: currentXP, level"
+      - "Usa Tailwind para estilos"
+      - "Animação suave"
+      - "Responsivo"
+    status: "done"
+
+  - id: "task_007"
+    title: "Criar componente StreakFire"
+    description: |
+      Criar componente React src/components/StreakFire.tsx que mostra:
+      - Ícone de fogo animado
+      - Número de dias de streak
+      - Tamanho do fogo cresce com streak
+      - Cor muda: vermelho (1-3), laranja (4-6), azul (7+)
+    priority: 2
+    category: "components"
+    difficulty: 2
+    estimated_minutes: 20
+    files_to_create:
+      - "src/components/StreakFire.tsx"
+    dependencies:
+      - "task_005"
+    acceptance_criteria:
+      - "Animação CSS do fogo"
+      - "3 tamanhos: small, medium, large"
+      - "Cor dinâmica"
+    status: "done"
+
+  - id: "task_008"
+    title: "Criar componente DrillCard"
+    description: |
+      Criar componente React src/components/DrillCard.tsx que mostra:
+      - Título e descrição do drill
+      - Categoria com ícone (🎵 som, 🎶 ritmo, 💬 sentido, ⚔️ batalha)
+      - Dificuldade (1-5 estrelas)
+      - XP reward
+      - Status: bloqueado, disponível, completado
+      - Botão de jogar
+    priority: 2
+    category: "components"
+    difficulty: 3
+    estimated_minutes: 25
+    files_to_create:
+      - "src/components/DrillCard.tsx"
+    dependencies:
+      - "task_002"
+    acceptance_criteria:
+      - "Props tipadas com interface Drill"
+      - "Estados visuais distintos"
+      - "Hover effect"
+      - "onClick handler"
+    status: "done"
+
+  - id: "task_009"
+    title: "Criar componente LeaderboardRow"
+    description: |
+      Criar componente React src/components/LeaderboardRow.tsx que mostra:
+      - Posição (#1, #2, #3 com medalhas)
+      - Avatar do usuário
+      - Nome
+      - XP ou pontuação
+      - Indicador de subida/descida
+    priority: 2
+    category: "components"
+    difficulty: 2
+    estimated_minutes: 15
+    files_to_create:
+      - "src/components/LeaderboardRow.tsx"
+    acceptance_criteria:
+      - "Top 3 tem estilo especial"
+      - "Highlight se for o usuário atual"
+      - "Animação de entrada"
+    status: "done"
+
+  - id: "task_010"
+    title: "Criar componente BadgeIcon"
+    description: |
+      Criar componente React src/components/BadgeIcon.tsx que mostra:
+      - Ícone do badge
+      - Tooltip com nome e descrição
+      - Estado: conquistado, bloqueado
+      - Animação ao conquistar
+    priority: 2
+    category: "components"
+    difficulty: 2
+    estimated_minutes: 15
+    files_to_create:
+      - "src/components/BadgeIcon.tsx"
+    acceptance_criteria:
+      - "Suporta todos os badges do sistema"
+      - "Grayscale quando bloqueado"
+      - "Tooltip funcional"
+    status: "done"
+
+  # ═══════════════════════════════════════════════════════════════
+  # P2 - DESEJÁVEL (fazer se sobrar tempo)
+  # ═══════════════════════════════════════════════════════════════
+
+  - id: "task_011"
+    title: "Criar hook useLocalStorage"
+    description: |
+      Criar hook src/hooks/useLocalStorage.ts para persistência local:
+      - Getter/setter tipado
+      - Serialização JSON automática
+      - Fallback para valor default
+      - Sync entre abas
+    priority: 3
+    category: "hooks"
+    difficulty: 2
+    estimated_minutes: 15
+    files_to_create:
+      - "src/hooks/useLocalStorage.ts"
+    acceptance_criteria:
+      - "Genérico: useLocalStorage<T>(key, defaultValue)"
+      - "Trata erros de parse"
+      - "Testes passando"
+    status: "done"
+
+  - id: "task_012"
+    title: "Criar hook useTimer"
+    description: |
+      Criar hook src/hooks/useTimer.ts para drills cronometrados:
+      - startTimer, pauseTimer, resetTimer
+      - Tempo decorrido
+      - Callback onTimeUp
+      - Formatação mm:ss
+    priority: 3
+    category: "hooks"
+    difficulty: 2
+    estimated_minutes: 15
+    files_to_create:
+      - "src/hooks/useTimer.ts"
+    acceptance_criteria:
+      - "Cleanup correto no unmount"
+      - "Preciso ao segundo"
+      - "Suporta countdown"
+    status: "done"
+
+  - id: "task_013"
+    title: "Criar utilitário de rima"
+    description: |
+      Criar arquivo src/utils/rhyme.ts com funções:
+      - getLastSyllable(word): retorna última sílaba
+      - checkRhyme(word1, word2): verifica se rimam
+      - getRhymeScore(word1, word2): 0-100 quão bem rimam
+      - getSuggestedRhymes(word, bank): sugestões do banco
+    priority: 3
+    category: "utils"
+    difficulty: 3
+    estimated_minutes: 25
+    files_to_create:
+      - "src/utils/rhyme.ts"
+    acceptance_criteria:
+      - "Funciona com português BR"
+      - "Trata acentos corretamente"
+      - "Performance OK (< 10ms)"
+    status: "done"
+
+  - id: "task_014"
+    title: "Criar componente ProgressCalendar"
+    description: |
+      Criar componente React src/components/ProgressCalendar.tsx:
+      - Calendário estilo GitHub contribution graph
+      - Cores por intensidade de treino
+      - Tooltip com detalhes do dia
+      - Navegação por mês
+    priority: 3
+    category: "components"
+    difficulty: 3
+    estimated_minutes: 30
+    files_to_create:
+      - "src/components/ProgressCalendar.tsx"
+    acceptance_criteria:
+      - "7 colunas (dom-sab)"
+      - "5-6 linhas por mês"
+      - "Cores: cinza, verde claro, verde médio, verde escuro"
+    status: "done"
+
+  - id: "task_015"
+    title: "Criar componente ShareCard"
+    description: |
+      Criar componente React src/components/ShareCard.tsx:
+      - Card visual para compartilhar no Instagram/TikTok
+      - Mostra: nome, nível, streak, score do dia
+      - Estética: escura, neon, trap
+      - Botão de copiar/salvar imagem
+    priority: 3
+    category: "components"
+    difficulty: 3
+    estimated_minutes: 30
+    files_to_create:
+      - "src/components/ShareCard.tsx"
+    acceptance_criteria:
+      - "Dimensões 1080x1080 (quadrado)"
+      - "Fundo escuro com gradiente"
+      - "Logo do app"
+      - "Hashtag #RimaQueVicia"
+    status: "done"
+
+  # ═══════════════════════════════════════════════════════════════
+  # TESTES (rodar em paralelo)
+  # ═══════════════════════════════════════════════════════════════
+
+  - id: "task_020"
+    title: "Testes para utilitário XP"
+    description: |
+      Criar testes src/__tests__/utils/xp.test.ts:
+      - Testa cálculo de XP
+      - Testa progressão de níveis
+      - Testa edge cases (XP negativo, nível 0)
+    priority: 2
+    category: "tests"
+    difficulty: 2
+    estimated_minutes: 15
+    files_to_create:
+      - "src/__tests__/utils/xp.test.ts"
+    dependencies:
+      - "task_004"
+    acceptance_criteria:
+      - "Coverage > 80%"
+      - "Testa casos de borda"
+    status: "done"
+
+  - id: "task_021"
+    title: "Testes para utilitário Streak"
+    description: |
+      Criar testes src/__tests__/utils/streak.test.ts:
+      - Testa continuidade de streak
+      - Testa reset de streak
+      - Testa bônus de streak
+    priority: 2
+    category: "tests"
+    difficulty: 2
+    estimated_minutes: 15
+    files_to_create:
+      - "src/__tests__/utils/streak.test.ts"
+    dependencies:
+      - "task_005"
+    acceptance_criteria:
+      - "Coverage > 80%"
+      - "Testa com diferentes timezones"
+    status: "done"
+
+# ═══════════════════════════════════════════════════════════════
+# CONFIGURAÇÕES
+# ═══════════════════════════════════════════════════════════════
+
+config:
+  max_tasks_per_cycle: 3
+  prefer_categories:
+    - "types"      # Mais seguros
+    - "utils"      # Testáveis
+    - "components" # Verificáveis visualmente
+    - "hooks"      # Mais complexos
+    - "tests"      # Sempre bem-vindos
+  
+  skip_if_dependencies_pending: true
+  run_tests_after_each_task: true
+  
+  # Categorias com risco
+  high_risk_categories:
+    - "services"    # Pode ter side effects
+    - "api"         # Pode vazar dados
+    - "auth"        # Segurança

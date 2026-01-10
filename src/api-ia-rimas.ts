@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+﻿import { Hono } from 'hono';
 import { rapLyrics, historicoRimas, getRandomVersos, getArtistasList, type RapLyric } from './data/rapLyrics';
 
 const iaRimasApi = new Hono();
