@@ -1,5 +1,5 @@
 /**
- * @fileoverview Serviço de banco de dados Firestore
+ * @fileoverview Serviço de banco de dados Firestore (com modo mock)
  * @module services/firebaseDB
  */
 
@@ -17,6 +17,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { useMockAuth } from '../config/env';
 import type {
   UserDocument,
   ProgressDocument,
@@ -27,6 +28,131 @@ import type {
 } from '../types/firebase';
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// MOCK DATABASE (para desenvolvimento sem Firestore)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const mockUsers = new Map<string, UserDocument>();
+const mockProgress = new Map<string, ProgressDocument[]>();
+const mockDrills: DrillDocument[] = [];
+
+/**
+ * Cria usuário mock
+ */
+function createMockUserData(userId: string, data: Partial<UserDocument>): UserDocument {
+  const defaultSettings: UserSettings = {
+    notifications: true,
+    sound: true,
+    theme: 'dark',
+    language: 'pt-BR',
+  };
+
+  return {
+    id: userId,
+    email: data.email || 'dev@iarimas.com.br',
+    displayName: data.displayName || 'Dev User',
+    photoURL: data.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=mock',
+    level: 1,
+    xp: 0,
+    streak: 0,
+    streakBest: 0,
+    drillsCompleted: 0,
+    totalScore: 0,
+    badges: [],
+    league: 'bronze',
+    createdAt: new Date(),
+    lastActive: new Date(),
+    settings: defaultSettings,
+    ...data,
+  };
+}
+
+async function mockGetUser(userId: string): Promise<UserDocument | null> {
+  console.log('[DB MOCK] 🎭 Buscando usuário:', userId);
+  return mockUsers.get(userId) || null;
+}
+
+async function mockCreateUser(userId: string, data: Partial<UserDocument>): Promise<UserDocument> {
+  console.log('[DB MOCK] 🎭 Criando usuário:', userId);
+  const userData = createMockUserData(userId, data);
+  mockUsers.set(userId, userData);
+  return userData;
+}
+
+async function mockUpdateUser(userId: string, data: Partial<UserDocument>): Promise<void> {
+  console.log('[DB MOCK] 🎭 Atualizando usuário:', userId);
+  const existing = mockUsers.get(userId);
+  if (existing) {
+    mockUsers.set(userId, { ...existing, ...data });
+  }
+}
+
+async function mockAddUserXP(userId: string, amount: number): Promise<void> {
+  console.log('[DB MOCK] 🎭 Adicionando XP:', amount);
+  const user = mockUsers.get(userId);
+  if (user) {
+    user.xp += amount;
+    mockUsers.set(userId, user);
+  }
+}
+
+async function mockUpdateUserStreak(userId: string): Promise<void> {
+  console.log('[DB MOCK] 🎭 Atualizando streak');
+  const user = mockUsers.get(userId);
+  if (user) {
+    user.streak += 1;
+    user.streakBest = Math.max(user.streak, user.streakBest);
+    mockUsers.set(userId, user);
+  }
+}
+
+async function mockGetUserProgress(userId: string): Promise<ProgressDocument[]> {
+  console.log('[DB MOCK] 🎭 Buscando progresso do usuário');
+  return mockProgress.get(userId) || [];
+}
+
+async function mockSaveProgress(
+  userId: string,
+  drillId: string,
+  data: Partial<ProgressDocument>
+): Promise<void> {
+  console.log('[DB MOCK] 🎭 Salvando progresso do drill:', drillId);
+  const userProgress = mockProgress.get(userId) || [];
+  const existing = userProgress.find((p) => p.drillId === drillId);
+
+  if (existing) {
+    Object.assign(existing, data);
+  } else {
+    userProgress.push({
+      id: `${userId}_${drillId}`,
+      userId,
+      drillId,
+      attempts: 1,
+      bestScore: 0,
+      stars: 0,
+      completed: false,
+      firstAttemptAt: new Date(),
+      lastAttemptAt: new Date(),
+      ...data,
+    } as ProgressDocument);
+  }
+
+  mockProgress.set(userId, userProgress);
+}
+
+async function mockGetAllDrills(): Promise<DrillDocument[]> {
+  console.log('[DB MOCK] 🎭 Buscando drills (retorna array vazio - sem dados mock)');
+  return mockDrills;
+}
+
+async function mockGetLeaderboard(
+  period: LeaderboardPeriod,
+  limitCount: number
+): Promise<LeaderboardEntry[]> {
+  console.log('[DB MOCK] 🎭 Buscando leaderboard');
+  return [];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // USERS
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -34,6 +160,10 @@ import type {
  * Busca um usuário pelo ID
  */
 export async function getUser(userId: string): Promise<UserDocument | null> {
+  if (useMockAuth) {
+    return mockGetUser(userId);
+  }
+
   try {
     const docRef = doc(db, 'users', userId);
     const docSnap = await getDoc(docRef);
@@ -52,6 +182,10 @@ export async function createUser(
   userId: string,
   data: Partial<UserDocument>
 ): Promise<UserDocument> {
+  if (useMockAuth) {
+    return mockCreateUser(userId, data);
+  }
+
   try {
     const defaultSettings: UserSettings = {
       notifications: true,
@@ -99,6 +233,10 @@ export async function updateUser(
   userId: string,
   data: Partial<UserDocument>
 ): Promise<void> {
+  if (useMockAuth) {
+    return mockUpdateUser(userId, data);
+  }
+
   try {
     const docRef = doc(db, 'users', userId);
     await updateDoc(docRef, {
@@ -134,6 +272,10 @@ export async function getDrill(drillId: string): Promise<DrillDocument | null> {
  * Busca todos os drills ativos
  */
 export async function getAllDrills(): Promise<DrillDocument[]> {
+  if (useMockAuth) {
+    return mockGetAllDrills();
+  }
+
   try {
     const q = query(
       collection(db, 'drills'),
@@ -187,6 +329,10 @@ export async function saveProgress(
   drillId: string,
   progress: Partial<ProgressDocument>
 ): Promise<void> {
+  if (useMockAuth) {
+    return mockSaveProgress(userId, drillId, progress);
+  }
+
   try {
     const progressId = `${userId}_${drillId}`;
     const docRef = doc(db, 'progress', progressId);
@@ -242,6 +388,10 @@ export async function getProgress(
  * Busca todo o progresso de um usuário
  */
 export async function getUserProgress(userId: string): Promise<ProgressDocument[]> {
+  if (useMockAuth) {
+    return mockGetUserProgress(userId);
+  }
+
   try {
     const q = query(collection(db, 'progress'), where('userId', '==', userId));
     const querySnapshot = await getDocs(q);
@@ -266,6 +416,10 @@ export async function getLeaderboard(
   period: LeaderboardPeriod = 'weekly',
   limitCount: number = 100
 ): Promise<LeaderboardEntry[]> {
+  if (useMockAuth) {
+    return mockGetLeaderboard(period, limitCount);
+  }
+
   try {
     const collectionName = `leaderboard_${period}`;
     const q = query(
@@ -333,6 +487,10 @@ export async function getUserRank(
  * Adiciona XP ao usuário e atualiza nível se necessário
  */
 export async function addUserXP(userId: string, xpAmount: number): Promise<void> {
+  if (useMockAuth) {
+    return mockAddUserXP(userId, xpAmount);
+  }
+
   try {
     const user = await getUser(userId);
     if (!user) return;
@@ -354,6 +512,10 @@ export async function addUserXP(userId: string, xpAmount: number): Promise<void>
  * Atualiza streak do usuário
  */
 export async function updateUserStreak(userId: string): Promise<void> {
+  if (useMockAuth) {
+    return mockUpdateUserStreak(userId);
+  }
+
   try {
     const user = await getUser(userId);
     if (!user) return;

@@ -4,12 +4,22 @@
  */
 
 /**
+ * Modo mock habilitado (desenvolvimento sem Firebase real)
+ */
+export const useMockAuth = import.meta.env.VITE_USE_FIREBASE_MOCK === 'true';
+
+/**
  * Obtém uma variável de ambiente obrigatória
- * @throws Error se a variável não existir
+ * Em modo mock, retorna valor fake ao invés de erro
  */
 function getRequiredEnv(key: string): string {
   const value = import.meta.env[key];
   if (!value) {
+    // Em modo mock, permite continuar com valores fake
+    if (useMockAuth) {
+      console.warn(`[ENV] Mock mode: ${key} usando valor fake`);
+      return 'MOCK_VALUE';
+    }
     throw new Error(
       `Missing required environment variable: ${key}\n` +
       `Please check your .env file or environment configuration.`
@@ -66,6 +76,12 @@ export const analyticsConfig = {
  * Chame esta função no início do app para detectar erros cedo
  */
 export function validateEnv(): void {
+  if (useMockAuth) {
+    console.warn('[ENV] 🎭 MOCK MODE ATIVADO - Firebase simulado');
+    console.warn('[ENV] Para usar Firebase real, remova VITE_USE_FIREBASE_MOCK do .env');
+    return;
+  }
+
   try {
     // Força a validação das variáveis obrigatórias
     void firebaseConfig;
