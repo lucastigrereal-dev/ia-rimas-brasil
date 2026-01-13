@@ -4,3 +4,7 @@ export { RhymeDisplay } from './RhymeDisplay';
 export { ScoreBar } from './ScoreBar';
 export { ActionButtons } from './ActionButtons';
 export { HistorySidebar } from './HistorySidebar';
+export { BeatPlayer } from './BeatPlayer';
+export { Metronome, MetronomeCompact } from './Metronome';
+export { FreestyleRecorder } from './FreestyleRecorder';
+export { FreestyleStudio } from './FreestyleStudio';
